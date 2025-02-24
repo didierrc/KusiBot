@@ -1,0 +1,18 @@
+[project]
+name = "kusibot"
+version = "0.1.0"
+description = "Chatbot for mental health self-assessments, combining AI-driven conversations with psychological screening."
+authors = [
+    {name = "Didier Reyes Castro",email = "didieryamil02@gmail.com"}
+]
+license = {text = "Apache-2.0"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask (>=3.1.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
