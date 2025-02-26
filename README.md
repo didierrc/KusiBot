@@ -1,5 +1,7 @@
 # KusiBot – AI-Powered Mental Health Chatbot 🤖❤️
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=didierrc_KusiBot&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=didierrc_KusiBot)
+
 Welcome to **KusiBot**, an intelligent chatbot designed to assist with **mental health self-assessments**. Using advanced **AI and NLP models**, KusiBot engages in conversations to help users reflect on their well-being through structured psychological screening tools. This project is part of my **Final Degree Project (TFG)** focused on leveraging AI for mental health support.
 
 > ⚠️ **Disclaimer:** KusiBot is **not a substitute for professional medical advice**. It is a research-based tool designed for self-assessment purposes only. If you are experiencing distress, please seek help from a qualified professional.
