@@ -1,26 +1,83 @@
 name: Build KusiBot
 
-on:
+# Automatically build on push to main or master, or when a PR is opened, synchronized, or reopened.
+on: 
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
     types: [ opened, synchronize, reopened ]
+  workflow_dispatch: # Allows manual triggering of this workflow.
 
 jobs:
-  sonarqube:
-    name: SonarQube
+  test-and-scan:
+    name: Test and SonarCloud Analysis
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository code
-      - name: Checkout
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Checkout out repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for SonarQube analysis
-        
-      # Analyse code with SonarQube
-      - name: SonarQube Scan
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      #----------------------------------------------
+      #          install poetry and deps
+      #----------------------------------------------
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 2.1.1
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction --no-ansi
+      #----------------------------------------------
+      #               Running tests
+      #----------------------------------------------
+      - name: Run tests
+        run: |
+          poetry run pytest --cov=kusibot --cov-report=xml --junitxml=test-results.xml
+      #----------------------------------------------
+      #         SonarCloud Static Analysis
+      #----------------------------------------------
+      - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      
+
+  build-and-push:
+    name: Build and Push Docker Image
+    needs: test-and-scan
+    runs-on: ubuntu-latest
+    steps:
+      #----------------------------------------------
+      #             check-out repo
+      #----------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      #----------------------------------------------
+      #            Setting up Docker
+      #----------------------------------------------
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      #----------------------------------------------
+      #     Building and Pushing into DockerHub
+      #----------------------------------------------
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/kusibot:latest,${{ vars.DOCKERHUB_USERNAME }}/kusibot:${{ github.sha }}
