@@ -13,3 +13,8 @@ def test_home_route(client):
     response = client.get('/')
     assert response.status_code == 200
     assert b'<!DOCTYPE html>' in response.data
+
+def test_main_function():
+    """Test that the main function exists."""
+    from kusibot.api.app import main
+    assert callable(main)

@@ -1,6 +1,9 @@
 from flask import Flask, render_template
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__, template_folder='frontend/templates', static_folder='frontend/static')
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 @app.route('/')
 def home():
