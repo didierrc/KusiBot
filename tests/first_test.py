@@ -1,5 +1,5 @@
 import pytest
-from kusibot.api.app import app
+from app import app
 
 @pytest.fixture
 def client():
@@ -16,5 +16,5 @@ def test_home_route(client):
 
 def test_main_function():
     """Test that the main function exists."""
-    from kusibot.api.app import main
+    from app import main
     assert callable(main)
