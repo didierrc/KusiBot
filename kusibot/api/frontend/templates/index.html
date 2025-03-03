@@ -3,5 +3,8 @@
 {% block title %}Home - KusiBot{% endblock %}
 
 {% block content %}
-    <p>This chatbot helps with mental health self-assessments.</p>
+    <p>Friendly chatbot designed to help you! Login to start or signup</p>
+    <button><a href="{{ url_for('auth_bp.get_login') }}">Login</a></button>
+    <button><a href="{{ url_for('auth_bp.get_signup') }}">Signup</a></button>
+    <img src="{{ url_for('static', filename='images/kusibot_logo.png') }}" alt="Kusibot Logo">
 {% endblock %}

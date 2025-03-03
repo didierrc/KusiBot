@@ -10,7 +10,9 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "flask (>=3.1.0,<4.0.0)",
-    "flask-wtf (>=1.2.2,<2.0.0)"
+    "flask-wtf (>=1.2.2,<2.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "flask-login (>=0.6.3,<0.7.0)"
 ]
 
 [tool.poetry.group.test.dependencies]
@@ -18,7 +20,7 @@ pytest = "^8.3.0"
 pytest-cov = "^6.0.0"
 
 [tool.poetry.scripts]
-kusibot = "kusibot.api.app:main"
+kusibot = "app:main"
 
 [project.urls]
 repository = "https://github.com/didierrc/KusiBot"
