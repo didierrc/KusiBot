@@ -17,8 +17,8 @@ ENV PATH="/root/.local/bin:${PATH}"
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
-# Copying the poetry.lock and pyproject.toml files
-COPY poetry.lock pyproject.toml README.md ./
+# Copying the root files
+COPY poetry.lock pyproject.toml README.md app.py ./
 
 # Copying application code
 COPY kusibot ./kusibot/
@@ -35,4 +35,4 @@ HEALTHCHECK --interval=1m --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5000/ || exit 1
 
 # Run the Flask app
-CMD ["poetry","run", "kusibot"]
+CMD ["poetry","run","kusibot"]
