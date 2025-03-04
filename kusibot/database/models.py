@@ -1,11 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
+from db import db
 import datetime
 
 #########################################
 # SQLAlchemy models for the database
+# https://flask-sqlalchemy.readthedocs.io/en/stable/models/
 #########################################
-
-db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
