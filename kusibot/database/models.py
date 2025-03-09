@@ -1,17 +1,18 @@
-from db import db
-import datetime
+from kusibot.database.db import db
+from datetime import datetime, timezone
+from flask_login import UserMixin
 
 #########################################
 # SQLAlchemy models for the database
 # https://flask-sqlalchemy.readthedocs.io/en/stable/models/
 #########################################
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now(datetime.timezone.utc))
+    password = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     is_professional = db.Column(db.Boolean, default=False) # True if the user is a professional (can go into dashboard), False if it's a simple user.
     conversations = db.relationship('Conversation', backref='user', lazy=True)
     assessments = db.relationship('Assessment', backref='user', lazy=True)
@@ -22,7 +23,7 @@ class User(db.Model):
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now(datetime.timezone.utc))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     finished_at = db.Column(db.DateTime, nullable=True)
     messages = db.relationship('Message', backref='conversation', lazy=True)
 
@@ -33,7 +34,7 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(datetime.timezone.utc))
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     is_user = db.Column(db.Boolean, nullable=False) # True if the message is from the user, False if it's from chatbot.
     intent = db.Column(db.String(50), nullable=True) # Intent of the message if detected.
     agent_type = db.Column(db.String(20), nullable=True) # Type of agent that answered the message (Conversarion or Assesment agent).
@@ -45,7 +46,7 @@ class Assessment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assessment_type = db.Column(db.String(20), nullable=False)  # e.g., 'PHQ-9'
-    start_time = db.Column(db.DateTime, default=datetime.now(datetime.timezone.utc))
+    start_time = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     end_time = db.Column(db.DateTime, nullable=True)
     total_score = db.Column(db.Integer, nullable=True)
     interpretation = db.Column(db.String(100), nullable=True)
@@ -61,7 +62,7 @@ class AssessmentQuestion(db.Model):
     question_text = db.Column(db.Text, nullable=False)
     user_response = db.Column(db.Text, nullable=False)  # Free text response
     categorized_value = db.Column(db.Integer, nullable=True)  # Mapped to standard scale
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<AssessmentQuestion {self.id!r}. Assessment: {self.assessment_id!r}. Question number: {self.question_number!r}. User response: {self.user_response!r}. Categorized value: {self.categorized_value!r}>'
