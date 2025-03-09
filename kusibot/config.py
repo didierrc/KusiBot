@@ -1,9 +1,11 @@
-import os
+import os, pathlib
 
 #########################################
 # Diffrerent configurations for the app #
 # https://dev.to/hackersandslackers/configuring-your-flask-app-2246 #
 #########################################
+
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 class Config:
     """Base configuration class"""
@@ -11,7 +13,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False # Disable the logs of INSERT, UPDATE, DELETE operations. Too much overhead.
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL',
-        f'sqlite:////instance/kusibot.db'
+        f'sqlite:///{BASE_DIR}/instance/kusibot.db'
     )
 
 
