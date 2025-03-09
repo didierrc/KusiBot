@@ -3,5 +3,13 @@
 {% block title %}KusiBot - Login Page{% endblock %}
 
 {% block content %}
-    <p>This is the login page!</p>
+<h2>Login</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.username.label }} {{ form.username() }} <br>
+    {{ form.password.label }} {{ form.password() }} <br>
+    {{ form.remember.label }} {{ form.remember() }} <br>
+    {{ form.submit() }}
+</form>
+<a href="{{ url_for('auth_bp.register') }}">Create an account</a>
 {% endblock %}

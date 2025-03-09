@@ -1,5 +1,8 @@
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
+from kusibot.database.models import User
 from kusibot.config import config
 from kusibot.database.db import init_db
 from kusibot.api.main.routes import main_bp
@@ -13,6 +16,8 @@ import os
 #########################################
 
 load_dotenv()
+
+bcrypt = Bcrypt()
 
 def create_app(config_name='default'):
   """Application-factory pattern"""
@@ -31,8 +36,19 @@ def create_app(config_name='default'):
   # Setting CSRF protection
   CSRFProtect(app)
 
+  # Initialize Bcrypt with the Flask app
+  bcrypt.init_app(app)
+
   # Initialise database
   init_db(app)
+
+  # Setting up login mgr.
+  login_manager = LoginManager(app)
+  login_manager.login_view = 'auth_bp.login'
+
+  @login_manager.user_loader
+  def load_user(user_id):
+    return User.query.get(int(user_id))
 
   # Registering the blueprints
   app.register_blueprint(main_bp)

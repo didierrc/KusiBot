@@ -3,8 +3,8 @@
 {% block title %}Home - KusiBot{% endblock %}
 
 {% block content %}
-    <p>Friendly chatbot designed to help you! Login to start or signup</p>
-    <button><a href="{{ url_for('auth_bp.get_login') }}">Login</a></button>
-    <button><a href="{{ url_for('auth_bp.get_signup') }}">Signup</a></button>
+    <p>Friendly chatbot designed to help you! Login to start or register</p>
+    <button><a href="{{ url_for('auth_bp.login') }}">Login</a></button>
+    <button><a href="{{ url_for('auth_bp.register') }}">Register</a></button>
     <img src="{{ url_for('static', filename='images/kusibot_logo.png') }}" alt="Kusibot Logo">
 {% endblock %}
