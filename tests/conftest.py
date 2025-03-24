@@ -14,6 +14,7 @@ def app():
     with app.app_context():
         
         # Create fresh database tables.
+        db.drop_all()
         db.create_all()
 
         # Add a test user.

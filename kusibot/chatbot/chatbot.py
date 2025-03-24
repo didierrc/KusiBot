@@ -26,7 +26,7 @@ class Chatbot:
 
         self.dialogue_manager = DialogueManagerAgent(BERT_INTENT_LABEL_MAPPING_PATH, BERT_INTENT_MODEL_PATH)
 
-    def get_response(self, user_input, user_id):
+    def get_response(self, user_input):
         """Generates a response to the user input based on the selected agent."""
         
         intent, confidence =  self.dialogue_manager.predict_intent(user_input, return_confidence=True)
