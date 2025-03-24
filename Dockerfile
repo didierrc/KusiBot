@@ -14,10 +14,6 @@ RUN apt-get update && \
 # Ensuring Poetry's bin directory is in PATH
 ENV PATH="/root/.local/bin:${PATH}"
 
-# Setting the environment variables
-ENV FLASK_ENV=prod
-ENV DATABASE_URL=/app/instance/kusibot.db
-
 # Configure poetry to not create a virtual environment
 RUN poetry config virtualenvs.create false
 
@@ -34,12 +30,12 @@ RUN mkdir -p /app/instance
 # Install dependencies
 RUN poetry install --only main
 
-# Expose Flask port
-EXPOSE 5000
+# Expose port
+EXPOSE 8000
 
 # Health check: Telling Docker how to test the container to check that it's still working.
 HEALTHCHECK --interval=1m --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/ || exit 1
+  CMD curl -f http://localhost:8000/ || exit 1
 
 # Copying the entrypoint script
 COPY docker-entrypoint.sh /entrypoint.sh

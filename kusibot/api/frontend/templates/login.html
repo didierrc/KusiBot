@@ -4,12 +4,37 @@
 
 {% block content %}
 <h2>Login</h2>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.username.label }} {{ form.username() }} <br>
-    {{ form.password.label }} {{ form.password() }} <br>
-    {{ form.remember.label }} {{ form.remember() }} <br>
-    {{ form.submit() }}
+  {{ form.hidden_tag() }}
+  
+  {% for field in form if field.widget.input_type != 'hidden' and field.name != 'submit' %}
+      <p>
+          {{ field.label }}<br>
+          {{ field(size=32) }}<br>
+          {% for error in field.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+          {% endfor %}
+      </p>
+  {% endfor %}
+  
+  <p>{{ form.submit() }}</p>
 </form>
+
+
 <a href="{{ url_for('auth_bp.register') }}">Create an account</a>
+
+
+
 {% endblock %}

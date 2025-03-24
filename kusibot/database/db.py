@@ -7,10 +7,17 @@ from flask_migrate import Migrate
 
 # Creating SQLALchemy instance
 db = SQLAlchemy()
+
+# Creating Migrate instance
 migrate = Migrate()
 
 def init_db(app):
-    """Initialising DB with Flask app"""
+    """
+    Initialising DB (SQLAlchemy) with Flask app.
+    
+    Parameters:
+        app (Flask): The Flask app instance.
+    """
 
     # Initialize SQLAlchemy with the app
     db.init_app(app)

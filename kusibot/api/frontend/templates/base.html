@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% endblock %}
 
-    {% block scripts %}{% endblock %}
+    {% block scripts_head %}{% endblock %}
     
     {% endblock %}
 </head>
@@ -27,6 +27,9 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    {% block scripts_body %}
+    {% endblock %}
 
 </body>
 </html>

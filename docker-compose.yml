@@ -1,19 +1,13 @@
-version: '3.8'
-
 services:
   kusibot:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "8000:8000"
     volumes:
       - ./.env:/app/.env
       - ./instance:/app/instance
-    environment:
-      - FLASK_ENV=development
-      - FLASK_SECRET=${FLASK_SECRET:-dev-secret-key}
-      - DATABASE_URL=/app/instance/kusibot.db
     restart: unless-stopped
     networks:
       - kusibot-network

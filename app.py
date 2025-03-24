@@ -8,62 +8,77 @@ from kusibot.database.db import init_db
 from kusibot.api.main.routes import main_bp
 from kusibot.api.auth.routes import auth_bp
 from kusibot.api.chatbot.routes import chatbot_bp
+from kusibot.chatbot.chatbot import Chatbot
 from dotenv import load_dotenv
 import os
 
-#########################################
-# Main entry point for the application.
-#########################################
+#############################################
+# Main entry point for the whole application.
+#############################################
 
+# Load environment variables from .env file.
 load_dotenv()
 
+# Initialise Bcrypt module for encryption.
 bcrypt = Bcrypt()
 
-def create_app(config_name='default'):
-  """Application-factory pattern"""
+def create_app(config_name):
+  """
+  Creates and Configures a Flask app instance
+  following the Application-factory pattern.
+  
+  Parameters:
+    config_name (str): The configuration name to use [dev/testing/prod].
+  
+  Returns:
+    Flask: The Flask app instance.
+  """
 
-  # Selecting Flask configuration
+  # Selecting corresponding Flask configuration object.
   app_config = config[config_name]
 
-  # Creating Flask instance
+  # Creating Flask instance with common templates and static folders.
   app = Flask(__name__,
             template_folder='kusibot/api/frontend/templates',
             static_folder='kusibot/api/frontend/static')
   
-  # Load configuration
+  # Load selected configuration object to the Flask app.
   app.config.from_object(app_config)
 
   # Setting CSRF protection
   CSRFProtect(app)
 
-  # Initialize Bcrypt with the Flask app
+  # Initialize Bcrypt with the Flask app.
   bcrypt.init_app(app)
 
-  # Initialise database
+  # Initialise database to use with the Flask app (db route depends on the config).
   init_db(app)
 
-  # Setting up login mgr.
+  # Setting up login manager and login page for the Flask app.
   login_manager = LoginManager(app)
   login_manager.login_view = 'auth_bp.login'
 
+  # Define the function that will be called to load a user.
   @login_manager.user_loader
   def load_user(user_id):
     return User.query.get(int(user_id))
+  
+  # Setting up chatbot instance.
+  app.chatbot = Chatbot()
 
-  # Registering the blueprints
+  # Registering the blueprints routes for the Flask app.
   app.register_blueprint(main_bp)
   app.register_blueprint(auth_bp, url_prefix='/auth')
   app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
 
   return app
 
+# Flask app instance creation
+app = create_app(os.getenv('FLASK_ENV', 'default'))
 
 def main():
-  """Main entry point for running the app."""
-
-  app = create_app(os.environ.get('FLASK_ENV', 'default'))
+  """Main entry point for running the app using Flask server."""
   app.run(host="0.0.0.0", port=5000, debug=True)
-
 
 if __name__ == '__main__':
   main()  

@@ -2,8 +2,143 @@
 
 {% block title %}KusiBot - Chatbot Page{% endblock %}
 
+{% block styles %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+{% endblock %}
+
 {% block content %}
-<h2>Welcome to the Chatbot!</h2>
-<p>This is the chatbot page. You need permissions to enter here.</p>
-<a href="{{ url_for('auth_bp.logout') }}">Logout</a>
+<div class="container">
+    <div class="header">
+        Mental Health Chatbot
+    </div>
+    <div class="chat-window" id="chat-window">
+        <div class="message bot-message">
+            Hello! I'm KusiBot and I am ready to help. How are you feeling today?
+        </div>
+        <div class="typing-indicator" id="typing-indicator">
+            Bot is typing...
+        </div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message here..." autofocus>
+        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- Add CSRF token as a hidden input -->
+<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+{% endblock %}
+
+{% block scripts_body %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const csrfToken = document.getElementById('csrf_token').value;
+
+        // Function to add a message to the chat window
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+            messageDiv.textContent = text;
+            
+            // Insert before typing indicator
+            chatWindow.insertBefore(messageDiv, typingIndicator);
+            
+            // Scroll to the bottom
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        // Function to show typing indicator
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Function to hide typing indicator
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Function to send message to server and get response
+        async function sendMessage(text) {
+            try {
+                showTypingIndicator();
+                
+                // Send message to server
+                const response = await fetch("{{ url_for('chatbot_bp.chat') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({ message: text }),
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator();
+                
+                // Parse response for intent and confidence if available
+                let botMessage = data.response;
+                let intent = null;
+                let confidence = null;
+                
+                // Check if the response contains intent information
+                const intentMatch = botMessage.match(/I think you are talking about (.*) with a confidence of ([\d.]+)/);
+                if (intentMatch) {
+                    intent = intentMatch[1];
+                    confidence = parseFloat(intentMatch[2]);
+                    
+                    // Clean up the bot message
+                    botMessage = botMessage.replace("Bot: ", "");
+                }
+                
+                // Add bot response
+                const botMessageDiv = addMessage(botMessage);
+                
+                // Add intent information if available
+                if (intent && confidence) {
+                    const intentDisplay = document.createElement('div');
+                    intentDisplay.classList.add('intent-display');
+                    intentDisplay.textContent = `Intent: ${intent} (${confidence})`;
+                    botMessageDiv.appendChild(intentDisplay);
+                }
+                
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Error:', error);
+                addMessage("Sorry, there was an error processing your request.");
+            }
+        }
+
+        // Event handler for send button
+        sendBtn.addEventListener('click', function() {
+            const text = userInput.value.trim();
+            if (text) {
+                addMessage(text, true);
+                userInput.value = '';
+                sendMessage(text);
+            }
+        });
+
+        // Event handler for Enter key
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const text = userInput.value.trim();
+                if (text) {
+                    addMessage(text, true);
+                    userInput.value = '';
+                    sendMessage(text);
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
