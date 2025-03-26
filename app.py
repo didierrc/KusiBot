@@ -73,11 +73,9 @@ def create_app(config_name):
 
   return app
 
-# Flask app instance creation
-app = create_app(os.getenv('FLASK_ENV', 'default'))
-
 def main():
   """Main entry point for running the app using Flask server."""
+  app = create_app(os.getenv('FLASK_ENV', 'default'))
   app.run(host="0.0.0.0", port=5000, debug=True)
 
 if __name__ == '__main__':

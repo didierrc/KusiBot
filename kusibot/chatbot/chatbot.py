@@ -1,4 +1,5 @@
 from kusibot.chatbot.dialogue_manager_agent import DialogueManagerAgent
+from kusibot.chatbot.conversation_agent import ConversationAgent
 import os
 
 # Get the directory where the script is located.
@@ -25,15 +26,15 @@ class Chatbot:
         """Initialises the chatbot agents."""
 
         self.dialogue_manager = DialogueManagerAgent(BERT_INTENT_LABEL_MAPPING_PATH, BERT_INTENT_MODEL_PATH)
+        self.conversation_agent = ConversationAgent()
 
-    def get_response(self, user_input):
+    def get_response(self, user_input, user_id):
         """Generates a response to the user input based on the selected agent."""
         
         intent, confidence =  self.dialogue_manager.predict_intent(user_input, return_confidence=True)
 
-        if confidence < CONFIDENCE_INTENT_THRESHOLD:
-            # TODO: redirect to conversation agent
-            return "Bot: I'm sorry, I didn't understand that."
+        if confidence < CONFIDENCE_INTENT_THRESHOLD or intent == "Normal":
+            return self.conversation_agent.generate_response(user_input, intent, user_id)
         else:
             # TODO: redirect to agent based on intent
             return f"Bot: I think you are talking about {intent} with a confidence of {confidence:.2f}"

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, current_app
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 #########################################
 # Handling chatbot interactions kusibot kusibot123
@@ -23,7 +23,7 @@ def chat():
         return jsonify({'error': 'No message provided'}), 400
     
     # Get response from chatbot
-    response = current_app.chatbot.get_response(user_message)
+    response = current_app.chatbot.get_response(user_message, current_user.id)
     
     # Return response
     return jsonify({'response': response})
