@@ -10,7 +10,12 @@ class ConversationAgent:
         Initialize the Normal Conversation Agent for mental health support.
         """
 
-        self.model = OllamaLLM(model=model_name)
+        try:
+          self.model = OllamaLLM(model=model_name)
+        except Exception:
+          print("----- OLLAMA IS NOT INSTALLED -----")
+          self.model = ""
+
         self.prompt_template = """
         You are a compassionate and supportive conversational agent designed to provide empathetic 
         and helpful responses in a mental health support context. Your primary goals are to:

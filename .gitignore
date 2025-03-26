@@ -169,6 +169,3 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-
-# Models
-kusibot/chatbot/bert_dialogue_mgr/model.safetensors
