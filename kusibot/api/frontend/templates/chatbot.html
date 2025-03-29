@@ -16,9 +16,6 @@
         Mental Health Chatbot
     </div>
     <div class="chat-window" id="chat-window">
-        <div class="message bot-message">
-            Hello! I'm KusiBot and I am ready to help. How are you feeling today?
-        </div>
         <div class="typing-indicator" id="typing-indicator">
             Bot is typing...
         </div>
@@ -90,29 +87,9 @@
                 
                 // Parse response for intent and confidence if available
                 let botMessage = data.response;
-                let intent = null;
-                let confidence = null;
-                
-                // Check if the response contains intent information
-                const intentMatch = botMessage.match(/I think you are talking about (.*) with a confidence of ([\d.]+)/);
-                if (intentMatch) {
-                    intent = intentMatch[1];
-                    confidence = parseFloat(intentMatch[2]);
-                    
-                    // Clean up the bot message
-                    botMessage = botMessage.replace("Bot: ", "");
-                }
                 
                 // Add bot response
                 const botMessageDiv = addMessage(botMessage);
-                
-                // Add intent information if available
-                if (intent && confidence) {
-                    const intentDisplay = document.createElement('div');
-                    intentDisplay.classList.add('intent-display');
-                    intentDisplay.textContent = `Intent: ${intent} (${confidence})`;
-                    botMessageDiv.appendChild(intentDisplay);
-                }
                 
             } catch (error) {
                 hideTypingIndicator();
@@ -142,6 +119,7 @@
                 }
             }
         });
+    
     });
 </script>
 {% endblock %}

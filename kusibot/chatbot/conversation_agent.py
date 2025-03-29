@@ -1,5 +1,7 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
+from kusibot.database.db import db
+from kusibot.database.models import Message
 
 PROMPT_TEMPLATE = """
 # Agent description
@@ -13,7 +15,6 @@ Your primary goals are to:
 4. Respect user's emotional state and boundaries
 
 # Conversation Context:
-- BERT Intent Detected: {intent}
 - Previous Conversation History: {chat_history}
 - User Query: {user_query}
 
@@ -24,6 +25,8 @@ Your primary goals are to:
 - Maintain a calm and supportive tone
 - If the conversation suggests serious mental health concerns, 
   gently suggest speaking with a mental health professional.
+- Detect a possible intent of the User Query from the following list: Normal, Depression or Anxiety.
+- Response format: [RESPONSE] - [DETECTED_INTENT]
 
 Your Response:
 """
@@ -38,18 +41,27 @@ class ConversationAgent:
     
     try:
       self.model = OllamaLLM(model=model_name)
-    except Exception:
-      print("ERROR: OLLAMA IS NOT INSTALLED")
-      self.model = ""
+    except Exception as e:
+      print(f"ERROR: Ollama is not installed - {e}")
+      self.model = None
     
     self.prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     
-  def generate_response(self, text, intent,  user_id):
+  def generate_response(self, text, conversation_id):
     
-    if self.model:
-      chain = self.prompt | self.model
-      return chain.invoke({"intent": intent, "chat_history": "", "user_query": text})
-    else:
-      return "Bot: Sorry, Ollama is not installed and I'm not able to help you."
+    if not self.model:
+      return "Sorry, the model is not available at the moment and I'm not able to help you :("
+
+    # Fetch last X messages for the context.
+    from kusibot.chatbot import CONVERSATION_MAX_RETRIEVAL
+    messages = Message.query.filter_by(conversation_id=conversation_id)\
+                          .order_by(Message.timestamp.asc())\
+                          .limit(CONVERSATION_MAX_RETRIEVAL)\
+                          .all()
+    chat_history = "\n".join([f"{'User' if msg.is_user else 'Bot'}: {msg.text}" for msg in messages])
+    
+    chain = self.prompt | self.model
+  
+    return chain.invoke({"chat_history": chat_history, "user_query": text})
 
     
