@@ -45,17 +45,17 @@ class DialogueManagerAgent:
 
     def clean_text(self, text):
         """Cleans user's text by removing special characters, spaces, etc."""
-
+        
         if isinstance(text, str):
             text = text.lower()                                                 # Lowercase statements
             text = re.sub(r'\[.*?\]', '', text)                                 # Remove statements in square brackets
             text = re.sub(r'https?://\S+|www\.\S+', '', text)                   # Remove links
             text = re.sub(r'<.*?>+', '', text)                                  # Remove HTML tags
             text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text)    # Remove punctuation
-            text = re.sub(r'\n', '', text)                                      # Remove newlines
-            text = re.sub(r'\w*\d\w*', '', text)                                # Remove words containing numbers
+            text = text.replace('\n', '')                                       # Remove newlines
+            text = re.sub(r'\b\w*\d\w*\b', '', text)                            # Remove words containing numbers
             text = re.sub(r'\s+', ' ', text).strip()                            # Remove extra whitespace
-
+            
             return text
         return ""
     

@@ -16,13 +16,15 @@ ERROR_MESSAGES = {
     'invalid_login': 'Invalid username or password.',
 }
 
+CHATBOT_BP = "chatbot_bp.chatbot"
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Login route for the application."""
 
     # If user is already authenticated, redirect to chatbot
     if current_user.is_authenticated:
-        return redirect(url_for("chatbot_bp.chatbot"))
+        return redirect(url_for(CHATBOT_BP))
     
     # If user is not authenticated, create login form object.
     form = LoginForm()
@@ -35,7 +37,7 @@ def login():
         
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for("chatbot_bp.chatbot")) # Once authenticated, redirect to chatbot.
+            return redirect(url_for(CHATBOT_BP)) # Once authenticated, redirect to chatbot.
         else:
             flash(ERROR_MESSAGES['invalid_login'], "error")
     
@@ -48,7 +50,7 @@ def register():
 
     # If user is already authenticated, redirect to chatbot.
     if current_user.is_authenticated:
-        return redirect(url_for("chatbot_bp.chatbot"))
+        return redirect(url_for(CHATBOT_BP))
     
     # If user is not authenticated, create register form object.
     form = RegisterForm()
