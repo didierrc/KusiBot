@@ -8,6 +8,7 @@ from kusibot.database.db import init_db
 from kusibot.api.main.routes import main_bp
 from kusibot.api.auth.routes import auth_bp
 from kusibot.api.chatbot.routes import chatbot_bp
+from kusibot.api.professional.routes import professional_bp
 from kusibot.chatbot.chatbot import Chatbot
 from dotenv import load_dotenv
 import os
@@ -70,6 +71,7 @@ def create_app(config_name):
   app.register_blueprint(main_bp)
   app.register_blueprint(auth_bp, url_prefix='/auth')
   app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
+  app.register_blueprint(professional_bp, url_prefix='/internal')
 
   return app
 

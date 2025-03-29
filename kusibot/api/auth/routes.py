@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from kusibot.api.auth.forms import RegisterForm, LoginForm
 from kusibot.database.models import User
 from kusibot.database.db import db
+from kusibot.api.auth.utils import redirect_to_principal_page
 
 #########################################
 # Handling user authentication
@@ -16,15 +17,19 @@ ERROR_MESSAGES = {
     'invalid_login': 'Invalid username or password.',
 }
 
-CHATBOT_BP = "chatbot_bp.chatbot"
+CHATBOT_URL = "chatbot_bp.chatbot"
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Login route for the application."""
+    """
+    Login route for the application.Accepts the following methods:
+    - GET: Goes to principal page if authenticated, else, goes to Login.
+    - POST: Log in a user to Kusibot given its username and password.
+    """
 
-    # If user is already authenticated, redirect to chatbot
+    # If user is already authenticated, redirect to principal page
     if current_user.is_authenticated:
-        return redirect(url_for(CHATBOT_BP))
+        return redirect_to_principal_page(current_user.is_professional)
     
     # If user is not authenticated, create login form object.
     form = LoginForm()
@@ -37,7 +42,7 @@ def login():
         
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for(CHATBOT_BP)) # Once authenticated, redirect to chatbot.
+            return redirect_to_principal_page(user.is_professional)
         else:
             flash(ERROR_MESSAGES['invalid_login'], "error")
     
@@ -50,7 +55,7 @@ def register():
 
     # If user is already authenticated, redirect to chatbot.
     if current_user.is_authenticated:
-        return redirect(url_for(CHATBOT_BP))
+        return redirect(url_for(CHATBOT_URL))
     
     # If user is not authenticated, create register form object.
     form = RegisterForm()
