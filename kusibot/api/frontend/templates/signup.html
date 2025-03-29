@@ -2,20 +2,8 @@
 {% block title %}KusiBot - Signup Page{% endblock %}
 {% block content %}
 <h2>Register</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  
-  {% for field in form if field.widget.input_type != 'hidden' and field.name != 'submit' %}
-      <p>
-          {{ field.label }}<br>
-          {{ field(size=32) }}<br>
-          {% for error in field.errors %}
-              <span style="color: red;">[{{ error }}]</span><br>
-          {% endfor %}
-      </p>
-  {% endfor %}
-  
-  <p>{{ form.submit() }}</p>
-</form>
+
+{% include "enter_form.html" %}
+
 <a href="{{ url_for('auth_bp.login') }}">Already have an account? Log in</a>
 {% endblock %}

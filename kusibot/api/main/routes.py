@@ -11,3 +11,9 @@ main_bp = Blueprint('main_bp', __name__)
 def index():
     return render_template('index.html')
 
+@main_bp.route('/about')
+def about():
+    return render_template('about.html')
+
+
+

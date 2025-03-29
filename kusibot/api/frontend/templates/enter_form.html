@@ -1,0 +1,15 @@
+<form method="POST">
+    {{ form.hidden_tag() }}
+    
+    {% for field in form if field.widget.input_type != 'hidden' and field.name != 'submit' %}
+        <p>
+            {{ field.label }}<br>
+            {{ field(size=32) }}<br>
+            {% for error in field.errors %}
+                <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </p>
+    {% endfor %}
+    
+    <p>{{ form.submit() }}</p>
+</form>
