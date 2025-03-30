@@ -15,11 +15,20 @@
     <div class="header">
         Mental Health Chatbot
     </div>
+    
     <div class="chat-window" id="chat-window">
+
+        {% for message in conversation %}
+            <div class="message {{ 'user-message' if message.is_user else 'bot-message' }}">
+                {{ message.text }}
+            </div>
+        {% endfor %}
+
         <div class="typing-indicator" id="typing-indicator">
             Bot is typing...
         </div>
     </div>
+    
     <div class="input-area">
         <input type="text" id="user-input" placeholder="Type your message here..." autofocus>
         <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
@@ -84,12 +93,7 @@
                 
                 const data = await response.json();
                 hideTypingIndicator();
-                
-                // Parse response for intent and confidence if available
-                let botMessage = data.response;
-                
-                // Add bot response
-                const botMessageDiv = addMessage(botMessage);
+                addMessage(data.response);
                 
             } catch (error) {
                 hideTypingIndicator();
@@ -119,7 +123,7 @@
                 }
             }
         });
-    
+
     });
 </script>
 {% endblock %}

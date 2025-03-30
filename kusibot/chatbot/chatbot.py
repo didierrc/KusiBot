@@ -70,6 +70,8 @@ class Chatbot:
                                intent=None,
                                agent_type=agent)
             
+            return response
+            
     def create_or_get_conversation(self, user_id):
         """
         Creates a new conversation for the authenticated user or gets the current conversation.
@@ -98,7 +100,7 @@ class Chatbot:
                 )
             
             messages = Message.query.filter_by(conversation_id=current_conv.id)\
-                                    .order_by(Message.timestamp.asc())\
+                                    .order_by(Message.timestamp.desc())\
                                     .limit(CONVERSATION_MAX_RETRIEVAL)\
                                     .all()
             return [{'text': msg.text, 'is_user': msg.is_user} for msg in messages]
