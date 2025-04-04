@@ -1,8 +1,14 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
-from kusibot.database.models import Message
+from kusibot.database.db_repositories import MessageRepository
 
-PROMPT_TEMPLATE = """
+class ConversationAgent:
+  """Handles normal conversation flow."""
+
+  CONTEXT_MAX_RETRIEVE_MSG = 10
+  AGENT_TYPE = "Conversation"
+  MODEL_NOT_AVAILABLE_RESPONSE = "Sorry, the model is not available at the moment and I'm not able to help you :("
+  PROMPT_TEMPLATE = """
 # Agent description
 You are KUSIBOT a supportive mental health chatbot designed to provide concise (2-3 sentences max) and
 empathetic responses based on the chat history and user query. You are part of a larger MAS 
@@ -31,9 +37,6 @@ Your primary goals are to:
 Your Response:
 """
 
-class ConversationAgent:
-  """Handles normal conversation flow."""
-
   def __init__(self, model_name="mistral"):
     """
     Initialize the Normal Conversation Agent for mental health support.
@@ -45,23 +48,32 @@ class ConversationAgent:
       print(f"ERROR: Ollama is not installed - {e}")
       self.model = None
     
-    self.prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    self.prompt = ChatPromptTemplate.from_template(self.PROMPT_TEMPLATE)
+
+    # Repositories used
+    self.msg_repo = MessageRepository()
     
-  def generate_response(self, text, conversation_id):
+  def generate_response(self, text, conversation_id, intent=None):
     
+    # Save user message
+    self.msg_repo.save_user_message(
+      conv_id=conversation_id,
+      msg=text,
+      intent=intent
+    )
+
     if not self.model:
-      return "Sorry, the model is not available at the moment and I'm not able to help you :("
+      return self.MODEL_NOT_AVAILABLE_RESPONSE, self.AGENT_TYPE
 
     # Fetch last X messages for the context.
-    from kusibot.chatbot.chatbot import CONVERSATION_MAX_RETRIEVAL
-    messages = Message.query.filter_by(conversation_id=conversation_id)\
-                          .order_by(Message.timestamp.desc())\
-                          .limit(CONVERSATION_MAX_RETRIEVAL)\
-                          .all()
+    messages = self.msg_repo.get_limited_messages(
+      conversation_id=conversation_id,
+      limit=self.CONTEXT_MAX_RETRIEVE_MSG
+    )
     chat_history = "\n".join([f"{'User' if msg.is_user else 'Bot'}: {msg.text}" for msg in messages])
     
     chain = self.prompt | self.model
   
-    return chain.invoke({"chat_history": chat_history, "user_query": text})
+    return chain.invoke({"chat_history": chat_history, "user_query": text}), self.AGENT_TYPE
 
     

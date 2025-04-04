@@ -5,7 +5,7 @@ BERT_TOKENIZER = "bert-base-uncased"
 CUSTOM_BERT_REPO = "didierrc/MH_BERT"
 TEXT_MAX_LENGTH = 128
 
-class DialogueManagerAgent:
+class IntentRecognizerAgent:
     """
     BERT-based intent classifier for the chatbot. 
     This class is responsible for predicting the intent of the user's input.

@@ -115,6 +115,12 @@ class Assessment(db.Model):
     end_time = db.Column(db.DateTime, nullable=True)
     total_score = db.Column(db.Integer, nullable=True)
     interpretation = db.Column(db.String(100), nullable=True)
+
+    # Assesment State
+    current_question = db.Column(db.Integer, default=1, nullable=False)
+    current_state = db.Column(db.String(30), nullable=False) 
+    last_free_text = db.Column(db.Text, nullable=True)
+
     questions = db.relationship('AssessmentQuestion', backref='assessment', lazy=True)
 
     def __repr__(self):

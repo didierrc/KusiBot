@@ -27,12 +27,13 @@ def init_db(app):
     # Initialize Flask-migrate: Useful when developing for DB changes.
     migrate.init_app(app, db, directory='kusibot/database/migrations')
 
-    # Creating tables and professional user
+    # Creating tables and data needed for the application: Professional User and Questionnaires data
+    db.create_all()
+    create_professional_user(app, db)
+    
+def create_professional_user(app,db):
     with app.app_context():
         
-        # Create all tables
-        db.create_all()
-
         # Create a professional user if not exists
         from kusibot.database.models import User
         professional_username = os.environ["PROFESSIONAL_USERNAME"]
