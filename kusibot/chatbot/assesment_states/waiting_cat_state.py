@@ -1,6 +1,4 @@
 from kusibot.chatbot.assesment_states.base_state import BaseState
-from kusibot.chatbot.assesment_states.finalizing_state import FinalizingState
-from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
 
 class WaitingCategorizationState(BaseState):
 
@@ -33,7 +31,9 @@ class WaitingCategorizationState(BaseState):
                 if assessment.current_question + 1 > total_questions: # All questions answered
                     
                     # Changing state and triggering finalization
+                    from kusibot.chatbot.assesment_states.finalizing_state import FinalizingState
                     self.context.transition_to_next_state(FinalizingState())
+                    
                     return self.context.state.generate_response(
                         user_input,
                         conversation_id,
@@ -43,6 +43,7 @@ class WaitingCategorizationState(BaseState):
                 else: # More questions to answer
                     
                     # Changing state
+                    from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
                     self.context.transition_to_next_state(AskingQuestionState())
 
                     # Updating assesment in DB

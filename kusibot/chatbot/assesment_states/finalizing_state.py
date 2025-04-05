@@ -1,5 +1,4 @@
 from kusibot.chatbot.assesment_states.base_state import BaseState
-from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
 from datetime import datetime, timezone
 
 class FinalizingState(BaseState):
@@ -36,6 +35,7 @@ class FinalizingState(BaseState):
         
         # Returning assesment object to the initial state
         # In case another assessment is started
+        from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
         self.context.transition_to_next_state(AskingQuestionState())
         
         # Get the final message

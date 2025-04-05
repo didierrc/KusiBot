@@ -28,11 +28,12 @@ def init_db(app):
     migrate.init_app(app, db, directory='kusibot/database/migrations')
 
     # Creating tables and data needed for the application: Professional User and Questionnaires data
-    db.create_all()
     create_professional_user(app, db)
     
 def create_professional_user(app,db):
     with app.app_context():
+
+        db.create_all()
         
         # Create a professional user if not exists
         from kusibot.database.models import User

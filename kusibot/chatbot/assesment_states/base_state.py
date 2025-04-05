@@ -1,7 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from kusibot.chatbot.assesment_agent import AssesmentAgent
-from kusibot.database.db_repositories import AssessmentRepository, ConversationRepository
 
 class BaseState(ABC):
     """
@@ -9,11 +7,11 @@ class BaseState(ABC):
     """
 
     @property
-    def context(self) -> AssesmentAgent:
+    def context(self):
         return self._context
     
     @context.setter
-    def context(self, context: AssesmentAgent) -> None:
+    def context(self, context):
         self._context = context
 
     @abstractmethod
