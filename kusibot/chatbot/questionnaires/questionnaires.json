@@ -95,6 +95,7 @@
             }
         ],
         "interpretations": {
+            "0-0": "No depression",
             "1-4": "Minimal depression",
             "5-9": "Mild depression",
             "10-14": "Moderate depression",
@@ -102,5 +103,88 @@
             "20-27": "Severe depression"
         },
         "intent": "depression"
+    },
+    "GAD-7": {
+        "title": "Generalized Anxiety Disorder 7-item (GAD-7)",
+        "description": "A brief scale for screening and measuring the severity of generalized anxiety disorder.",
+        "questions": [
+            {
+                "id": 1,
+                "question": "Over the last 2 weeks, how often have you been bothered by feeling nervous, anxious, or on edge",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 2,
+                "question": "Over the last 2 weeks, how often have you been bothered by not being able to stop or control worrying",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 3,
+                "question": "Over the last 2 weeks, how often have you been bothered by worrying too much about different things",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 4,
+                "question": "Over the last 2 weeks, how often have you been bothered by trouble relaxing",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 5,
+                "question": "Over the last 2 weeks, how often have you been bothered by being so restless that it is hard to sit still",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 6,
+                "question": "Over the last 2 weeks, how often have you been bothered by becoming easily annoyed or irritable",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            },
+            {
+                "id": 7,
+                "question": "Over the last 2 weeks, how often have you been bothered by feeling afraid as if something awful might happen",
+                "options": [
+                    "Not at all",
+                    "Several days",
+                    "More than half the days",
+                    "Nearly every day"
+                ]
+            }
+        ],
+        "interpretations": {
+            "0-4": "Minimal anxiety",
+            "5-9": "Mild anxiety",
+            "10-14": "Moderate anxiety",
+            "15-21": "Severe anxiety"
+        },
+        "intent": "anxiety"
     }
 }
