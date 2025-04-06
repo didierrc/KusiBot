@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from kusibot.api.auth.forms import RegisterForm, LoginForm
@@ -85,5 +85,6 @@ def register():
 def logout():
     """Logout route for the application."""
 
+    current_app.chatbot.end_conversation(current_user.id)
     logout_user()
     return redirect(url_for("main_bp.index"))

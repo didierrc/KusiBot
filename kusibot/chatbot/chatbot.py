@@ -88,6 +88,18 @@ class Chatbot:
         
         return [{'text': msg.text, 'is_user': msg.is_user} for msg in messages]
     
+    def end_conversation(self, user_id):
+        
+        # Get the current conversation for the user
+        current_conv = self.conv_repo.get_current_conversation_by_user_id(user_id)
+
+        # If there is a current conversation, end it
+        if current_conv:
+            self.conv_repo.end_conversation(current_conv.id)
+            return True
+        
+        return False
+
     def _handle_response_when_no_assesment(self, user_input, conversation_id):
         
         # If there is no current assessment, we need to get the intent of the user input.

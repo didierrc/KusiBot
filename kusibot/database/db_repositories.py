@@ -35,6 +35,16 @@ class ConversationRepository:
             db.session.rollback()
             return None
         
+    def end_conversation(self, conv_id):
+        try:
+            conversation = self.get_conversation(conv_id)
+            if conversation:
+                conversation.finished_at = datetime.now(timezone.utc)
+                db.session.commit()
+        except Exception as e:
+            print(f"Error ending conversation: {e}")
+            db.session.rollback()
+
 class MessageRepository:
 
     def save_chatbot_message(self, conv_id, msg, intent=None, agent_type="Conversation"):
