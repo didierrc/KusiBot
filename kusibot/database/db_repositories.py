@@ -1,6 +1,7 @@
 from kusibot.database.db import db
 from kusibot.database.models import Conversation, Message, Assessment, AssessmentQuestion
 from sqlalchemy import func
+from datetime import datetime, timezone
 
 class ConversationRepository:
 
@@ -16,7 +17,8 @@ class ConversationRepository:
         
     def create_conversation(self, user_id):
         try:
-            new_conversation = Conversation(user_id=user_id)
+            new_conversation = Conversation(user_id=user_id,
+                                            created_at=datetime.now(timezone.utc))
             db.session.add(new_conversation)
             db.session.commit()
             return new_conversation
@@ -40,6 +42,7 @@ class MessageRepository:
             message = Message(
                 conversation_id=conv_id,
                 text=msg,
+                timestamp=datetime.now(timezone.utc),
                 is_user=False,
                 intent=intent,
                 agent_type=agent_type
@@ -55,6 +58,7 @@ class MessageRepository:
             message = Message(
                 conversation_id=conv_id,
                 text=msg,
+                timestamp=datetime.now(timezone.utc),
                 is_user=True,
                 intent=intent,
             )
@@ -73,6 +77,17 @@ class MessageRepository:
                              .all()
         except Exception as e:
             print(f"Error retrieving messages: {e}")
+            db.session.rollback()
+            return []
+        
+    def get_all_messages(self, conv_id):
+        try:
+            return db.session.query(Message)\
+                             .filter_by(conversation_id=conv_id)\
+                             .order_by(Message.timestamp.desc())\
+                             .all()
+        except Exception as e:
+            print(f"Error retrieving all messages: {e}")
             db.session.rollback()
             return []
     
@@ -101,6 +116,7 @@ class AssessmentRepository:
             new_assessment = Assessment(
                 user_id=user_id,
                 assessment_type=assessment_type,
+                start_time=datetime.now(timezone.utc),
                 current_state=state
             )
             db.session.add(new_assessment)
@@ -142,7 +158,8 @@ class AssessmentQuestionRepository:
                 question_number=question_number,
                 question_text=question_text,
                 user_response=user_response,
-                categorized_value=categorized_value
+                categorized_value=categorized_value,
+                timestamp=datetime.now(timezone.utc)
             )
             db.session.add(assessment_question)
             db.session.commit()

@@ -113,9 +113,9 @@ class AssesmentAgent:
             # Shouldn't reach here if questionnaire does not exist.
             questionnaire_to_take = self.map_intent_to_assessment(intent)
         
-            self.assess_repo.create_assessment(user_id=current_conv.user_id,
+            current_assesment = self.assess_repo.create_assessment(user_id=current_conv.user_id,
                                                assessment_type=questionnaire_to_take,
-                                               current_state=self.STATE_ASKING
+                                               state=self.STATE_ASKING
                                             )
         
         # Process response based on STATE

@@ -21,7 +21,7 @@ class WaitingCategorizationState(BaseState):
                 self.context.assess_question_repo.save_assessment_question(
                     assessment_id=assessment_id,
                     question_number=assessment.current_question,
-                    question_text=question_json['text'],
+                    question_text=question_json['question'],
                     user_response=user_input,
                     categorized_value=selected_index
                 )

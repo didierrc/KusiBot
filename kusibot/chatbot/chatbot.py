@@ -50,6 +50,24 @@ class Chatbot:
             intent=None,
             agent_type=agent
         )
+
+        # TODO: REMOVE THIS
+        msg = self.msg_repo.get_all_messages(current_conv.id)
+        for i, m in enumerate(msg):
+            msg[i] = {
+                'text': m.text,
+                'is_user': m.is_user,
+                'intent': m.intent,
+                'agent_type': m.agent_type,
+                'timestamp': m.timestamp
+            }
+
+            print(f"Message {i}:")
+            print(f"  Text: {msg[i]['text']}")
+            print(f"  Is user: {msg[i]['is_user']}")
+            print(f"  Intent: {msg[i]['intent']}")
+            print(f"  Agent type: {msg[i]['agent_type']}")
+            print(f"  Timestamp: {msg[i]['timestamp']}")
             
         return response
             
@@ -65,7 +83,7 @@ class Chatbot:
         """
             
         # Get the current conversation for the user
-        current_conv = self.conv_repo.get_current_conversation(user_id)
+        current_conv = self.conv_repo.get_current_conversation_by_user_id(user_id)
             
         # If there is no current conversation...
         if not current_conv:

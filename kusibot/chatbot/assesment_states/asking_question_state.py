@@ -9,9 +9,10 @@ class AskingQuestionState(BaseState):
         question_json = self.context.get_question_json(assessment_id)
 
         # Get the model natural lead-in phrase
+        user_id = self.context.assess_repo.get_assessment(assessment_id).user_id
         lead_in = self.context.naturalize_question(question_json['question'],
                                                    question_json['id'],
-                                                   assessment_id.user_id)
+                                                   user_id)
         
         # Changing state of AssesmentAgent to WaitingFreeTextState
         self.context.transition_to_next_state(WaitingFreeTextState())
