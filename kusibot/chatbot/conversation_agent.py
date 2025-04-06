@@ -67,6 +67,8 @@ Your Response:
       conv_id=conversation_id,
       limit=self.CONTEXT_MAX_RETRIEVE_MSG
     )
+    messages.reverse()
+    
     chat_history = "\n".join([f"{'User' if msg.is_user else 'Bot'}: {msg.text}" for msg in messages])
     
     chain = self.prompt | self.model

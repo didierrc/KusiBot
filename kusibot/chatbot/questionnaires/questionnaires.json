@@ -94,7 +94,7 @@
                 ]
             }
         ],
-        "interpretation": {
+        "interpretations": {
             "1-4": "Minimal depression",
             "5-9": "Mild depression",
             "10-14": "Moderate depression",

@@ -79,17 +79,6 @@ class MessageRepository:
             print(f"Error retrieving messages: {e}")
             db.session.rollback()
             return []
-        
-    def get_all_messages(self, conv_id):
-        try:
-            return db.session.query(Message)\
-                             .filter_by(conversation_id=conv_id)\
-                             .order_by(Message.timestamp.desc())\
-                             .all()
-        except Exception as e:
-            print(f"Error retrieving all messages: {e}")
-            db.session.rollback()
-            return []
     
 class AssessmentRepository:
 
@@ -150,6 +139,17 @@ class AssessmentRepository:
             return 0
 
 class AssessmentQuestionRepository:
+    
+    def get_question_by_assessment_id(self, assessment_id):
+        try:
+            return db.session.query(AssessmentQuestion)\
+                             .filter_by(assessment_id=assessment_id)\
+                             .order_by(AssessmentQuestion.question_number)\
+                             .all()
+        except Exception as e:
+            print(f"Error retrieving questions: {e}")
+            db.session.rollback()
+            return []
     
     def save_assessment_question(self, assessment_id, question_number, question_text, user_response, categorized_value):
         try:

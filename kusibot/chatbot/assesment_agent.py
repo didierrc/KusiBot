@@ -69,9 +69,10 @@ class AssesmentAgent:
             return {}
         
     def transition_to_next_state(self, state):
-        print(f"Assesment Context: Transitioning to state --> {type(state).__name__}")
         self.state = state
         self.state.context = self
+
+        print(f"AssesmentAgent: Transitioning from {type(self.state).__name__} --> {type(state).__name__}")
 
     def map_intent_to_assessment(self, intent):
         for questionnaire_key, questionnaire_data in self.questionnaires.items():
@@ -132,6 +133,7 @@ class AssesmentAgent:
         # Get the context for the question
         current_conv = self.conv_repo.get_current_conversation_by_user_id(user_id)
         messages = self.msg_repo.get_limited_messages(current_conv.id, self.CONTEXT_MAX_RETRIEVAL)
+        messages.reverse()
         
         chat_history = "\n".join([f"{'User' if msg.is_user else 'Bot'}: {msg.text}" for msg in messages])
 

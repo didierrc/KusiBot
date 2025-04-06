@@ -50,24 +50,6 @@ class Chatbot:
             intent=None,
             agent_type=agent
         )
-
-        # TODO: REMOVE THIS
-        msg = self.msg_repo.get_all_messages(current_conv.id)
-        for i, m in enumerate(msg):
-            msg[i] = {
-                'text': m.text,
-                'is_user': m.is_user,
-                'intent': m.intent,
-                'agent_type': m.agent_type,
-                'timestamp': m.timestamp
-            }
-
-            print(f"Message {i}:")
-            print(f"  Text: {msg[i]['text']}")
-            print(f"  Is user: {msg[i]['is_user']}")
-            print(f"  Intent: {msg[i]['intent']}")
-            print(f"  Agent type: {msg[i]['agent_type']}")
-            print(f"  Timestamp: {msg[i]['timestamp']}")
             
         return response
             
@@ -102,6 +84,7 @@ class Chatbot:
         # Either a new conversation was created or the current one was found, return the messages
         messages = self.msg_repo.get_limited_messages(conv_id=current_conv.id, 
                                                     limit=self.CHATBOT_MAX_RETRIEVE_MSG)
+        messages.reverse()
         
         return [{'text': msg.text, 'is_user': msg.is_user} for msg in messages]
     
