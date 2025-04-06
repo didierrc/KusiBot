@@ -14,20 +14,47 @@ class AssesmentAgent:
     STATE_WAITING_CATEGORIZATION = "waiting_categorization"
     STATE_FINISHED = "finished"
 
-    MODEL_PROMPT = """
-    You are a friendly assistant in a mental health chatbot. 
-    Generate a short, natural lead-in phrase (1 sentence max) to gently introduce an assessment question."
-    Do NOT ask the actual question. The question is about: '{question}'. "
-    Generate ONLY the lead-in phrase taking in mind the following rules:
-    - If the ID of the question is 1: Generate the lead-in phrase based on the conversation context.
-    - If the ID is other than 1: Generate the lead-in phrase based on the previous question.
-    Question ID: {question_id}
-    Context: {context}
-    Your Response:"
+    MODEL_PROMPT_QUESTION = """
+# Agent Role & Tone:
+You are an assistant within a mental health chatbot (KUSIBOT). Adopt a gentle, calm, supportive, and natural conversational style.
+
+# Task:
+Generate a **single, concise sentence (strictly 1 sentence max)** that naturally introduces the *topic* 
+of the upcoming assessment question ({question}). Your primary goal is to make this introduction feel like a smooth, 
+integrated part of the ongoing conversation, leveraging the `context`.
+**Crucially: Do NOT state the actual assessment question itself.** Your sentence is purely a transition phrase to its general theme.
+
+# Input Information:
+* Upcoming Question Topic: {question}  # A brief description of the theme of the question to be asked next.
+* Upcoming Question ID: {question_id} # The sequence number (1, 2, 3...).
+* Recent Conversation Context (Last 6 messages): {context} # The recent interaction history. For question_id > 1, this includes the user's response(s) to previous question(s).
+
+# Generation Rules:
+
+1.  **If Question ID (`question_id`) is 1:**
+    * Use the `context` to formulate a sentence that gently transitions from the general chat or the trigger for the assessment into the first question's topic (`{question}`). 
+    Acknowledge the start of this focused part of the conversation.
+    * *Example Goal:* Make the user feel comfortable starting the assessment based on what was just discussed.
+
+2.  **If Question ID (`question_id`) is greater than 1:**
+    * Use the latest messages in the `context` (likely the user's answer to the previous question) to create a sentence that flows naturally into the `upcoming_question` topic (`{question}`).
+    * The sentence should feel like a logical continuation or the next step, based on the immediately preceding exchange visible in the `context`.
+    * *Example Goal:* Ensure the sequence of questions feels connected and conversational, not abrupt, by linking to the user's last input implicitly or explicitly.
+
+3.  **Always:**
+    * Prioritize a natural, flowing conversational feel.
+    * Maintain a supportive and gentle tone.
+    * Strictly adhere to the 1-sentence limit.
+    * Focus *only* on introducing the topic (`{question}`), not the specifics of the assessment question.
+
+# Output Format:
+Output *only* the single introduction sentence. Do not add any extra text, explanations, or greetings.
+
+Your Response:
     """
 
     AGENT_TYPE = "Assesment"
-    CONTEXT_MAX_RETRIEVAL = 4
+    CONTEXT_MAX_RETRIEVAL = 6
 
     def __init__(self, model_name="mistral"):
         
@@ -38,7 +65,7 @@ class AssesmentAgent:
           print(f"ERROR: Ollama is not installed - {e}")
           self.model = None
         
-        self.prompt = ChatPromptTemplate.from_template(self.MODEL_PROMPT)
+        self.prompt_question = ChatPromptTemplate.from_template(self.MODEL_PROMPT_QUESTION)
 
         # Load questionnaire data
         self.questionnaires = self._load_questionnaires()
@@ -137,7 +164,7 @@ class AssesmentAgent:
         
         chat_history = "\n".join([f"{'User' if msg.is_user else 'Bot'}: {msg.text}" for msg in messages])
 
-        chain = self.prompt | self.model  
+        chain = self.prompt_question | self.model  
         
         return chain.invoke({"question": question, "question_id": question_id, "context": chat_history})
                 
