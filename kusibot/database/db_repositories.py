@@ -1,7 +1,36 @@
 from kusibot.database.db import db
-from kusibot.database.models import Conversation, Message, Assessment, AssessmentQuestion
+from kusibot.database.models import Conversation, Message, Assessment, AssessmentQuestion, User
 from sqlalchemy import func
 from datetime import datetime, timezone
+from flask_bcrypt import Bcrypt
+
+class UserRepository:
+
+    def get_user_by_username(self, username):
+        try:
+            return db.session.query(User).filter_by(username=username).first()
+        except Exception as e:
+            print(f"Error retrieving user by username: {e}")
+            db.session.rollback()
+            return None
+        
+    def add_user(self, username, email, password, is_professional=False):
+        try:
+            # Hash the password
+            hashed_password = Bcrypt().generate_password_hash(password).decode('utf-8')
+            # Create a new professional user
+            professional = User(username=username,
+                                email=email,
+                                password=hashed_password,
+                                created_at=datetime.now(timezone.utc),
+                                is_professional=is_professional)
+            db.session.add(professional)
+            db.session.commit()
+            return professional
+        except Exception as e:
+            print(f"Error adding user: {e}")
+            db.session.rollback()
+            return None
 
 class ConversationRepository:
 

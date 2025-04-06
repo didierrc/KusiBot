@@ -2,8 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, current_
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from kusibot.api.auth.forms import RegisterForm, LoginForm
-from kusibot.database.models import User
-from kusibot.database.db import db
+from kusibot.database.db_repositories import UserRepository
 from kusibot.api.auth.utils import redirect_to_principal_page
 
 #########################################
@@ -38,7 +37,8 @@ def login():
     if form.validate_on_submit():
         
         # Check if user exists and password is correct.
-        user = User.query.filter_by(username=form.username.data).first()
+        user_repo = UserRepository()
+        user = user_repo.get_user_by_username(form.username.data)
         
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
@@ -63,16 +63,9 @@ def register():
     # If form is submitted, validate the form data.
     if form.validate_on_submit():
     
-        # Hash the password and create a new user.
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(username=form.username.data, 
-                        email=form.email.data, 
-                        password=hashed_password)
-        
-        # Save it to the database.
-        db.session.add(new_user)
-        db.session.commit()
-        
+        user_repo = UserRepository()
+        user_repo.add_user(form.username.data, form.email.data, form.password.data, is_professional=False)
+    
         # Redirect to login page.
         flash('Account created successfully! You can now log in.', 'success')
         return redirect(url_for('auth_bp.login'))
