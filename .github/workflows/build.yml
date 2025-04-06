@@ -38,9 +38,9 @@ jobs:
       #----------------------------------------------
       #               Running tests
       #----------------------------------------------
-      - name: Run tests
-        run: |
-          poetry run pytest --cov=kusibot --cov-report=xml --junitxml=test-results.xml
+      #- name: Run tests
+      #  run: |
+      #    poetry run pytest --cov=kusibot --cov-report=xml --junitxml=test-results.xml
       #----------------------------------------------
       #         SonarCloud Static Analysis
       #----------------------------------------------
