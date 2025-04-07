@@ -3,8 +3,34 @@
 {% block title %}Home - KusiBot{% endblock %}
 
 {% block content %}
-    <p>Friendly chatbot designed to help you! Login to start or register</p>
-    <button><a href="{{ url_for('auth_bp.login') }}">Login</a></button>
-    <button><a href="{{ url_for('auth_bp.register') }}">Register</a></button>
-    <img src="{{ url_for('static', filename='images/kusibot_logo.png') }}" alt="Kusibot Logo">
+<div class="text-center mt-4 mb-5"> 
+    
+    <img src="{{ url_for('static', filename='images/kusibot_logo.png') }}" alt="Kusibot Logo" class="img-fluid mb-4" style="max-width: 250px; height: auto;"> 
+    
+    <h1 class="fw-light mb-3">Welcome to KusiBot</h1> 
+    
+    <p class="lead mb-4 mx-auto" style="max-width: 600px; font-weight: 400;">
+        Your friendly mental health companion, here to offer support and initial assessment. 
+        <br>
+        <br>
+        Please login or register to begin.
+    </p>
+
+    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-5">
+         <a href="{{ url_for('auth_bp.login') }}" class="btn btn-outline-secondary btn-lg px-4 me-sm-3 fw-medium">
+             <i class="fa-solid fa-right-to-bracket me-2"></i>Login
+         </a>
+
+         <a href="{{ url_for('auth_bp.register') }}" class="btn btn-primary btn-lg px-4 fw-medium">
+             <i class="fa-solid fa-user-plus me-2"></i>Register
+         </a>
+    </div>
+
+    <div class="container" style="max-width: 700px;">
+      <p class="text-muted px-3 small">
+          <strong>Important:</strong> KusiBot provides supportive conversations and preliminary assessments. It is an AI assistant developed for a Final Degree Project and is not a substitute for professional medical advice, diagnosis, or treatment. If you are in crisis or need medical assistance, please consult a qualified healthcare provider or contact emergency services immediately.
+      </p>
+    </div>
+
+</div>
 {% endblock %}
