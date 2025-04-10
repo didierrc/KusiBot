@@ -5,17 +5,29 @@ from kusibot.database.models import User
 
 class LoginForm(FlaskForm):
     """Login form."""
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', 
+                           validators=[DataRequired()], 
+                           render_kw={'placeholder': 'KusiBot'})
+    password = PasswordField('Password', 
+                             validators=[DataRequired()],
+                             render_kw={'placeholder': 'MySuperPassword'})
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
 class RegisterForm(FlaskForm):
     """Registration form."""
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=30)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    username = StringField('Username', 
+                           validators=[DataRequired(), Length(min=4, max=30)],
+                           render_kw={'placeholder': 'KusiBot'})
+    email = StringField('Email', 
+                        validators=[DataRequired(), Email()],
+                        render_kw={'placeholder': 'kusibot@email.com'})
+    password = PasswordField('Password', 
+                             validators=[DataRequired(), Length(min=6, max=20)],
+                             render_kw={'placeholder': 'MySuperPassword'})
+    confirm_password = PasswordField('Confirm Password', 
+                                     validators=[DataRequired(), EqualTo('password')],
+                                     render_kw={'placeholder': 'MySuperPassword'})
     submit = SubmitField('Register')
 
     def validate_username(self, username):

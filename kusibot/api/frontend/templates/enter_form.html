@@ -1,15 +1,89 @@
-<form method="POST">
+<form method="POST" novalidate>
+    
+    <!-- CSRF token -->
     {{ form.hidden_tag() }}
-    
+
     {% for field in form if field.widget.input_type != 'hidden' and field.name != 'submit' %}
-        <p>
-            {{ field.label }}<br>
-            {{ field(size=32) }}<br>
-            {% for error in field.errors %}
-                <span style="color: red;">[{{ error }}]</span><br>
-            {% endfor %}
-        </p>
-    {% endfor %}
+
+        {% if field.type == 'PasswordField' %} <!-- PASSWORD FIELD HANDLER-->
     
-    <p>{{ form.submit() }}</p>
+            <div class="mb-3">
+                
+                {{ field.label(class="form-label") }}
+                
+                <div class="input-group"> 
+                    {% if field.errors %}
+                        {{ field(class="form-control is-invalid", id=field.id, **(field.render_kw or {})) }}
+                    {% else %}
+                        {{ field(class="form-control", id=field.id, **(field.render_kw or {})) }}
+                    {% endif %}
+            
+                    <!-- EYE ICON-->
+                    <span class="input-group-text bg-light" data-eye="disabled">
+                        <i class="fas fa-eye password-toggle-icon" style="cursor: pointer;" title="Show/Hide password"></i>
+                    </span>
+                </div>
+         
+         
+                {% if field.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ field.errors[0] }}
+                    </div>
+                {% endif %}
+            
+            </div>
+
+        {% elif field.type == 'BooleanField' %} <!-- BOOLEAN FIELD HANDLER-->
+            
+            <div class="form-check mb-3">
+                
+                {% if field.errors %}
+                    
+                    {{ field(class="form-check-input is-invalid", **(field.render_kw or {})) }}
+                
+                {% else %}
+                
+                    {{ field(class="form-check-input", **(field.render_kw or {})) }}
+                
+                {% endif %}
+                
+                {{ field.label(class="form-check-label") }}
+                
+                {% if field.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ field.errors[0] }}
+                    </div>
+                {% endif %}
+                
+            </div>
+        
+        {% else %}
+            <div class="mb-3">
+                
+                {{ field.label(class="form-label") }}
+                
+                {% if field.errors %}
+                    
+                    {{ field(class="form-control is-invalid", **(field.render_kw or {})) }}
+                    
+                    <div class="invalid-feedback">
+                        {{ field.errors[0] }}
+                    </div>
+                
+                {% else %}
+                    
+                    {{ field(class="form-control", **(field.render_kw or {})) }}
+                
+                {% endif %}
+                
+            </div>
+        {% endif %}
+
+    {% endfor %}
+
+    <!-- SUBMIT BUTTON -->
+    <div class="d-grid gap-2 mt-4"> 
+        {{ form.submit(class="btn btn-primary btn-lg") }}
+    </div>
+
 </form>
