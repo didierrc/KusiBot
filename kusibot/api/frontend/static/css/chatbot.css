@@ -1,99 +1,42 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    height: 100%;
-    background-color: #f5f5f5;
+/* General */
+#chat-window {
+  scroll-behavior: smooth;
+  background-color: #f8f9fa;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    max-width: 800px;
-    margin: 0 auto;
-    height: 100vh;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+img[alt="Bot-Icon-Message"],
+img[alt="User-Icon-Message"] {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
 }
 
-.header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 20px;
-    text-align: center;
-    font-size: 24px;
-    border-bottom: 1px solid #ddd;
+div > i[class*="fa-user"]{
+  width: 30px; 
+  height: 30px; 
+  flex-shrink: 0; 
+  background-color: #6c757d;
 }
 
-.chat-window {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+div > div[class="message-text"]{
+  max-width: 75%;
 }
 
-.message {
-    margin-bottom: 15px;
-    max-width: 70%;
-    padding: 10px 15px;
-    border-radius: 20px;
-    word-wrap: break-word;
+/* Typing Indicator Dots Animation */
+#typing-indicator span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #6c757d;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typing-dots 1.4s infinite ease-in-out both;
 }
+#typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+#typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+#typing-indicator span:nth-child(3) { animation-delay: 0s; }
 
-.bot-message {
-    align-self: flex-start;
-    background-color: #f1f0f0;
-    color: #333;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: #4CAF50;
-    color: white;
-}
-
-.input-area {
-    display: flex;
-    padding: 15px;
-    border-top: 1px solid #ddd;
-}
-
-#user-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    outline: none;
-    font-size: 16px;
-}
-
-#send-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-left: 10px;
-    cursor: pointer;
-    outline: none;
-}
-
-.intent-display {
-    font-size: 12px;
-    color: #777;
-    margin-top: 5px;
-    font-style: italic;
-}
-
-.typing-indicator {
-    display: none;
-    background-color: #f1f0f0;
-    color: #333;
-    padding: 8px 12px;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    align-self: flex-start;
-    font-style: italic;
+@keyframes typing-dots {
+  0%, 80%, 100% { opacity: 0; transform: scale(0.5); }
+  40% { opacity: 1; transform: scale(1.0); }
 }

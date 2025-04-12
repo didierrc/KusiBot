@@ -86,7 +86,10 @@ class Chatbot:
                                                     limit=self.CHATBOT_MAX_RETRIEVE_MSG)
         messages.reverse()
         
-        return [{'text': msg.text, 'is_user': msg.is_user} for msg in messages]
+        return [{'text': msg.text, 
+                 'is_user': msg.is_user,
+                 'timestamp': msg.timestamp.isoformat()} 
+                 for msg in messages]
     
     def end_conversation(self, user_id):
         

@@ -15,5 +15,7 @@ def index():
 def about():
     return render_template('about.html')
 
-
-
+@main_bp.route('/sos')
+def sos():
+    """Render the chatbot SOS list page"""
+    return render_template('sos.html')

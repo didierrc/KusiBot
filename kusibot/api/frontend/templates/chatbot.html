@@ -1,128 +1,96 @@
 {% extends "base.html" %}
 
-{% block title %}KusiBot - Chatbot Page{% endblock %}
+{% block title %}Chat - KusiBot{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<a href="{{ url_for('auth_bp.logout') }}">Logout</a>
+<!-- Main container for the Chat -->
+<div class="container-fluid h-100 p-0 d-flex flex-column">
 
-<div class="container">
-    <div class="header">
-        Mental Health Chatbot
-    </div>
-    
-    <div class="chat-window" id="chat-window">
+    <!-- Card container -->
+    <div class="card flex-grow-1 m-lg-3 border-0 shadow-sm overflow-hidden">
 
-        {% for message in conversation %}
-            <div class="message {{ 'user-message' if message.is_user else 'bot-message' }}">
-                {{ message.text }}
+        <!-- Card header: Title and SOS button -->
+        <div class="card-header bg-light border-bottom p-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-semibold">KusiChat</h6>
+                <a href="{{ url_for('main_bp.sos') }}" class="btn btn-danger btn-sm py-1 px-2" id="sos-button-header" title="Get Help Now">
+                    <i class="fas fa-phone-volume me-1"></i> Crisis Support
+                </a>
             </div>
-        {% endfor %}
-
-        <div class="typing-indicator" id="typing-indicator">
-            Bot is typing...
         </div>
-    </div>
-    
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message here..." autofocus>
-        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
 
-<!-- Add CSRF token as a hidden input -->
+        <!-- Card body: Messages Container -->
+        <div class="card-body p-3 overflow-auto" id="chat-window" role="log" aria-live="polite">
+
+            <!-- Loop through messages received -->
+            {% for message in conversation %}
+            
+                <div class="d-flex mb-3 {{ 'justify-content-end' if message.is_user else 'justify-content-start' }}">
+
+                    <!-- Bot Icon -->
+                    {% if not message.is_user %}
+                    <img src="{{ url_for('static', filename='images/kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
+                    {% endif %}
+
+                    <!-- Message Div -->
+                    <div class="p-2 px-3 rounded mw-75 {{ 'bg-primary text-white' if message.is_user else 'bg-white border' }}">
+                        <div class="message-text">{{ message.text }}</div>
+                        {% if message.timestamp %}
+                        <small class="message-timestamp d-block mt-1 {{ 'text-white-50 text-end' if message.is_user else 'text-muted text-start' }}" data-timestamp="{{ message.timestamp }}"></small>
+                        {% endif %}
+                    </div>
+
+                    <!-- User Icon -->
+                    {% if message.is_user %}
+                    <!--<div class="rounded-circle ms-2 align-self-end d-flex align-items-center justify-content-center text-white">
+                        <i class="fa-solid fa-user fa-xs"></i>
+                    </div>-->
+                    <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="User-Icon-Message" class="rounded-circle me-2 align-self-end">
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+            <!-- Typing indicator -->
+            <div id="typing-indicator" class="d-none mb-3 justify-content-start align-items-center">
+                 <img src="{{ url_for('static', filename='images/kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
+                 <div class="p-2 px-3 rounded bg-light border text-muted fst-italic">
+                    <span></span><span></span><span></span>
+                 </div>
+            </div>
+
+        </div>
+
+        <!-- Card footer: Input area -->
+        <div class="card-footer p-2 bg-light border-top">
+            <div class="input-group">
+                <input type="text" id="user-input" class="form-control border-0" placeholder="Type your message..." autofocus aria-label="User message input">
+                <button id="send-btn" class="btn btn-link text-primary" type="button" aria-label="Send message">
+                    <i class="fas fa-paper-plane fs-5"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div> {# End container-fluid #}
+
+<!-- Hidden CSRF Token  -->
 <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
+
 {% endblock %}
 
 {% block scripts_body %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        const chatWindow = document.getElementById('chat-window');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const csrfToken = document.getElementById('csrf_token').value;
-
-        // Function to add a message to the chat window
-        function addMessage(text, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
-            messageDiv.textContent = text;
-            
-            // Insert before typing indicator
-            chatWindow.insertBefore(messageDiv, typingIndicator);
-            
-            // Scroll to the bottom
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            
-            return messageDiv;
-        }
-
-        // Function to show typing indicator
-        function showTypingIndicator() {
-            typingIndicator.style.display = 'block';
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        // Function to hide typing indicator
-        function hideTypingIndicator() {
-            typingIndicator.style.display = 'none';
-        }
-
-        // Function to send message to server and get response
-        async function sendMessage(text) {
-            try {
-                showTypingIndicator();
-                
-                // Send message to server
-                const response = await fetch("{{ url_for('chatbot_bp.chat') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
-                    },
-                    body: JSON.stringify({ message: text }),
-                });
-                
-                const data = await response.json();
-                hideTypingIndicator();
-                addMessage(data.response);
-                
-            } catch (error) {
-                hideTypingIndicator();
-                console.error('Error:', error);
-                addMessage("Sorry, there was an error processing your request.");
-            }
-        }
-
-        // Event handler for send button
-        sendBtn.addEventListener('click', function() {
-            const text = userInput.value.trim();
-            if (text) {
-                addMessage(text, true);
-                userInput.value = '';
-                sendMessage(text);
-            }
-        });
-
-        // Event handler for Enter key
-        userInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const text = userInput.value.trim();
-                if (text) {
-                    addMessage(text, true);
-                    userInput.value = '';
-                    sendMessage(text);
-                }
-            }
-        });
-
-    });
-</script>
+    {{ super()}}
+    <script type="text/javascript">
+        const CHAT_URL = "{{ url_for('chatbot_bp.chat') }}"
+        const BOT_ICON_URL = "{{ url_for('static', filename='images/kusibot_icon.png') }}"
+    </script>
+    <script text="text/javascript" src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 {% endblock %}
