@@ -1,0 +1,14 @@
+/* SOS CSS */
+.list-group-item i.fa-fw {
+    font-size: 1.2em;
+    vertical-align: middle; 
+}
+
+.list-group-item strong {
+    font-weight: 600; 
+}
+
+.resource-description {
+   font-size: 0.95em;
+   color: #495057;
+}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Crisis Support - KusiBot{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+
+            <h1 class="text-center mb-4 border-bottom pb-3">
+                <i class="fa-solid fa-hand-holding-medical me-2"></i>Immediate Help & Crisis Support
+            </h1>
+
+            <p class="lead text-center mt-4 mb-4">
+                If you are going through a difficult time, feeling overwhelmed, or having thoughts of harming yourself, please know that you are not alone and help is available.
+            </p>
+            <p class="text-center mb-5">
+                Below are some resources available in Spain that offer confidential support. KusiBot cannot provide emergency assistance, please reach out to one of these services.
+            </p>
+
+            <h2 class="h4 mb-3 text-center">National Support (Spain)</h2>
+
+            <!-- National Support Container -->
+            <div class="list-group shadow-sm mb-5">
+                
+                <!-- 024 -->
+                <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-2">
+                        <h5 class="mb-1 fw-bold">Línea 024 - Suicide Prevention Hotline</h5>
+                        <span class="badge bg-success rounded-pill align-self-start">24/7 Available</span>
+                    </div>
+                    
+                    <p class="mb-2 resource-description">
+                        Official Ministry of Health hotline run by Cruz Roja for anyone experiencing suicidal thoughts or behaviours, or their families/friends. Free, confidential, and anonymous.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="tel:024" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-phone fa-fw me-1"></i>Call 024
+                        </a>
+                        <a href="https://www.sanidad.gob.es/linea024/home.htm" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-globe fa-fw me-1"></i>Website
+                        </a>
+                        <a href="https://www2.cruzroja.es/web/cruzroja/chat-linea024" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-commenting fa-fw me-1"></i>Chat
+                        </a>
+                        <a href="https://linea024.svisual.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm"> {# Link points to same page where sign language access is mentioned #}
+                            <i class="fa-solid fa-sign-language fa-fw me-1"></i>Sign Language Access
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Telf Esperanza -->
+                <div class="list-group-item p-3">
+                    <div class="d-flex w-100 justify-content-between mb-2">
+                        <h5 class="mb-1 fw-bold">Teléfono de la Esperanza</h5>
+                        <span class="badge bg-success rounded-pill align-self-start">24/7 Available</span>
+                    </div>
+                    <p class="mb-2 resource-description">
+                        A well-known non-profit organisation offering confidential listening and emotional support for people in crisis situations.
+                    </p>
+                     <div class="d-flex flex-wrap gap-3">
+                        <a href="tel:717003717" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-phone fa-fw me-1"></i>Call 717 003 717
+                        </a>
+                        <a href="https://telefonodelaesperanza.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-globe fa-fw me-1"></i>Website
+                        </a>
+                        <a href="https://telefonodelaesperanza.org/necesito-ayuda" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-commenting fa-fw me-1"></i>Chat
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <p class="text-center mb-5">
+                You can find more support resources <a href="https://findahelpline.com/es-ES" target="_blank" rel="noopener noreferrer">Here</a>.
+            </p>
+
+            <!-- Regional Support Container -->
+            <h2 class="h4 mb-3 text-center">Regional Support (Asturias)</h2>
+            <div class="bg-light p-3 rounded border mb-5">
+                <p>
+                   For urgent, life-threatening situations in Asturias, always call <strong>112</strong> or the national <strong>024</strong> line.
+                </p>
+                <p class="mb-0">
+                    For non-emergency mental health support, you can access services through your local primary care center. Find your nearest "Centro de Salud" via 
+                    <a href="https://www.astursalud.es/noticias/-/noticias/centros-asistenciales" target="_blank" rel="noopener noreferrer">AsturSalud</a>.
+                </p>
+            </div>
+
+
+            <div class="text-center text-muted">
+                <p>Remember, reaching out is a sign of strength. There are people who care and want to help.</p>
+            </div>
+
+        </div> 
+    </div> 
+</div>
+{% endblock %}
