@@ -2,6 +2,7 @@ from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask import render_template
 from kusibot.database.models import User
 from kusibot.config import config
 from kusibot.database.db import init_db
@@ -10,6 +11,7 @@ from kusibot.api.auth.routes import auth_bp
 from kusibot.api.chatbot.routes import chatbot_bp
 from kusibot.api.professional.routes import professional_bp
 from kusibot.chatbot.chatbot import Chatbot
+from kusibot.dashboard.dashboard import Dashboard
 from dotenv import load_dotenv
 import os
 
@@ -64,14 +66,20 @@ def create_app(config_name):
   def load_user(user_id):
     return User.query.get(int(user_id))
   
-  # Setting up chatbot instance.
+  # Setting up logic instances.
   app.chatbot = Chatbot()
+  app.dashboard = Dashboard()
 
   # Registering the blueprints routes for the Flask app.
   app.register_blueprint(main_bp)
   app.register_blueprint(auth_bp, url_prefix='/auth')
   app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
-  app.register_blueprint(professional_bp, url_prefix='/internal')
+  app.register_blueprint(professional_bp, url_prefix='/dashboard')
+
+  @app.errorhandler(404)
+  def page_not_found(e):
+    """Custom error handler for 404 errors."""
+    return render_template('not_found.html'), 404
 
   return app
 

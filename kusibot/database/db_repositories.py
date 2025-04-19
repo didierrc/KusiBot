@@ -31,6 +31,14 @@ class UserRepository:
             print(f"Error adding user: {e}")
             db.session.rollback()
             return None
+        
+    def get_non_professional_users(self):
+        try:
+            return db.session.query(User).filter_by(is_professional=False).all()
+        except Exception as e:
+            print(f"Error retrieving non-professional users: {e}")
+            db.session.rollback()
+            return []
 
 class ConversationRepository:
 
@@ -41,6 +49,17 @@ class ConversationRepository:
                              .first()
         except Exception as e:
             print(f"Error retrieving current conversation: {e}")
+            db.session.rollback()
+            return None
+        
+    def get_last_conversation_by_user_id(self, user_id):
+        try:
+            return db.session.query(Conversation)\
+                             .filter_by(user_id=user_id)\
+                             .order_by(Conversation.created_at.desc())\
+                             .first()
+        except Exception as e:
+            print(f"Error retrieving last conversation: {e}")
             db.session.rollback()
             return None
         
@@ -118,6 +137,17 @@ class MessageRepository:
             print(f"Error retrieving messages: {e}")
             db.session.rollback()
             return []
+        
+    def get_messages_by_conversation_id(self, conv_id):
+        try:
+            return db.session.query(Message)\
+                             .filter_by(conversation_id=conv_id)\
+                             .order_by(Message.timestamp)\
+                             .all()
+        except Exception as e:
+            print(f"Error retrieving messages: {e}")
+            db.session.rollback()
+            return []
     
 class AssessmentRepository:
 
@@ -176,6 +206,17 @@ class AssessmentRepository:
             print(f"Error calculating total score: {e}")
             db.session.rollback()
             return 0
+        
+    def get_assessments_by_user_id(self, user_id):
+        try:
+            return db.session.query(Assessment)\
+                             .filter_by(user_id=user_id)\
+                             .order_by(Assessment.start_time.desc())\
+                             .all()
+        except Exception as e:
+            print(f"Error retrieving assessments: {e}")
+            db.session.rollback()
+            return []
 
 class AssessmentQuestionRepository:
     

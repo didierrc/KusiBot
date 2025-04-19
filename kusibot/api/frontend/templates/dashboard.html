@@ -1,8 +1,154 @@
 {% extends "base.html" %}
 
-{% block title %}Home - KusiBot{% endblock %}
+{% block title %}Dashboard - KusiBot{% endblock %}
 
-{% block content %}
-    <p>Dashboard</p>
-    <a href="{{ url_for('auth_bp.logout') }}">Logout</a>
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid mt-3 vh-100">
+    <div class="row">
+
+        <!-- Principal Sidebar: Shows list of users -->
+        <nav id="sidebarDashboard" class="col-md-4 col-lg-3 d-none d-md-block bg-light sidebar border-end">
+            
+            <div class="position-sticky pt-3 sidebar-sticky">     
+                
+                <!-- Sidebar Title -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-2 text-muted">
+                    USER SELECTION
+                    <br>
+                    (by username)
+                </h6>
+
+                <!-- Sidebar Search Bar -->
+                <div class="px-3 mb-3">
+                    <input type="search" class="form-control form-control-sm" placeholder="Search users..." id="sidebarSearchInput">
+                </div>
+
+                <!-- Sidebar List of Users -->
+                <div id="sidebarUserList">
+                    <!-- List -->
+                    <ul class="nav flex-column">
+                        {% for user in users %}
+                            <li class="nav-item">
+                                <a class="nav-link user-select-link" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}">
+                                    <i class="fas fa-user fa-fw me-2"></i>{{ user.username }}
+                                </a>
+                            </li>
+                        {% endfor %}                        
+                    </ul>
+                </div>
+
+                <!-- Sidebar Footer -->
+                <p class="p-3 text-muted small">Click a user to view its details.</p>
+            </div>
+        </nav>
+
+        <!-- Dashboard -->
+        <main class="col-md-8 ms-sm-auto col-lg-9 px-md-4">
+        
+            <!-- Flash Messages -->
+            {% include "flash.html" %}
+
+            <!-- Dashboard Sidebar for Small Screens -->
+            <!-- Collapse button -->
+            <button class="btn btn-light border d-md-none w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarDashboardSmall">
+                <i class="fas fa-users me-2"></i> Select User <i class="fas fa-chevron-down ms-2 small"></i>
+            </button>
+
+            <!-- Replicated Sidebar for Small Screens-->
+            <div class="collapse d-md-none bg-light border rounded p-3 mb-3" id="sidebarDashboardSmall">
+                 
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center mb-2 text-muted">
+                    USER SELECTION (by username)
+                </h6>
+
+                <div class="mb-3">
+                    <input type="search" class="form-control form-control-sm" placeholder="Search users..." id="sidebarSearchInputSmall">
+                </div>
+                
+                <div id="sidebarUserListSmall">
+                    <ul class="nav flex-column">
+                        {% for user in users %}
+                            <li class="nav-item">
+                                <a class="nav-link user-select-link" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}" data-bs-toggle="collapse" data-bs-target="#sidebarDashboardSmall">
+                                    <i class="fas fa-user fa-fw me-2"></i>{{ user.username }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <p class="p-3 text-muted small mb-0">Click a user to view its details.</p>
+            </div>
+
+            <!-- Dashboard MAIN -->
+
+            <!-- Title -->
+            <div class="pt-3 pb-2 mb-3 border-bottom">
+                <h2>Dashboard</h2>
+            </div>
+
+            <!-- Info when no Selection -->
+            <div id="selectUserInfo" class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Please select a user to view their conversation history and assessment results.
+            </div>
+
+
+            <!-- Conversations & Assesments -->
+            <div id="userDataArea" class="d-none">
+
+                <!-- User selected -->
+                <h4 class="mb-3">Viewing Data for: <span id="selectedUsername" class="fw-bold"></span></h4>
+
+                <!-- Data Tabs -->
+                <ul class="nav nav-tabs mb-3" id="userDataTabs" role="tablist">
+                    
+                    <!-- Conversation Tab -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="conversationsTab" data-bs-toggle="tab" data-bs-target="#conversationsPanel" type="button" role="tab" aria-controls="conversationsPanel" aria-selected="true">
+                            <i class="fas fa-comments me-1"></i> Conversations
+                        </button>
+                    </li>
+
+                    <!-- Assesment Tab -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="assessmentsTab" data-bs-toggle="tab" data-bs-target="#assessmentsPanel" type="button" role="tab" aria-controls="assessmentsPanel" aria-selected="false">
+                            <i class="fas fa-clipboard-list me-1"></i> Assessments
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tabs Content -->
+                <div class="tab-content" id="userDataTabsContent">
+                    
+                    <!-- Conversations Tab -->
+                    <div class="tab-pane fade show active" id="conversationsPanel" role="tabpanel" aria-labelledby="conversationsTab" tabindex="0">
+                        <h5 class="mb-3">Last Conversation History</h5>
+                        <p class="loadingConversation text-muted text-center">Loading conversation...</p>
+                        <div class="conversation-history p-3 border rounded bg-light overflow-auto"></div>
+                    </div>
+                    
+                    <!-- Assesment Tab -->
+                    <div class="tab-pane fade" id="assessmentsPanel" role="tabpanel" aria-labelledby="assessmentsTab" tabindex="0">
+                        <h5 class="mb-3">Assessment Results</h5>
+                        <div class="accordion" id="assessmentsAccordion"></div>
+                    </div>
+                </div>
+            </div> 
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts_body %}
+    {{ super() }}
+    <script type="text/javascript">
+        const DASHBOARD_URL = "{{ url_for('professional_bp.dashboard') }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

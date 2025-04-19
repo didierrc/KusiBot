@@ -83,7 +83,12 @@ header .navbar {
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 0.25rem;
-  border: 1px solid transparent;
+}
+
+.alert{
+  background-color: #c2e4f7;
+  color: black;
+  border-color: #a9d7f0;
 }
 
 .error {
