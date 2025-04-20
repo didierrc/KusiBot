@@ -51,7 +51,7 @@ async function getConversationHistory(userId) {
         }
 
         // Create messages divs
-        div_messages = []
+        let div_messages = []
         for (const message of data.messages) {
             const messageDiv = document.createElement('div')
             messageDiv.classList.add('mb-2')
@@ -113,8 +113,11 @@ async function getAssessmentsHistory(userId) {
         }
 
         // Create assessments divs
-        div_assessments = []
+        let div_assessments = []
         for (const assessment of data.assessments) {
+
+            console.log(assessment)
+
             const assessmentAccordion = document.createElement('div')
             assessmentAccordion.classList.add('accordion-item')
 
@@ -134,11 +137,11 @@ async function getAssessmentsHistory(userId) {
             const assessmentStrong = document.createElement('strong')
             assessmentStrong.textContent = assessment.assessment_type
             assessmentButton.appendChild(assessmentStrong)
-            assessmentButton.appendChild(document.createTextNode(` - ${new Date(assessment.start_time).toLocaleString()}`))
+            assessmentButton.appendChild(document.createTextNode(`, Taken on: ${new Date(assessment.start_time).toLocaleString()}`))
 
             const assessmentBadge = document.createElement('span')
             assessmentBadge.classList.add('badge')
-            assessmentBadge.classList.add('bg-secondary')
+            assessmentBadge.classList.add('bg-primary')
             assessmentBadge.classList.add('ms-2')
             assessmentBadge.textContent = `Interpretation: ${assessment.interpretation}`
             assessmentButton.appendChild(assessmentBadge)
@@ -157,6 +160,10 @@ async function getAssessmentsHistory(userId) {
             assessmentBody.classList.add('accordion-body')
             assessmentBody.textContent = `Fetching assessment details...`
 
+            assessmentCollapse.appendChild(assessmentBody)
+            assessmentAccordion.appendChild(assessmentCollapse)
+
+            div_assessments.push(assessmentAccordion)
         }
 
         return div_assessments

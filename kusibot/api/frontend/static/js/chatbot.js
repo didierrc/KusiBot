@@ -87,16 +87,12 @@ document.addEventListener('DOMContentLoaded', function () {
         messageContainer.classList.add(isUser ? 'justify-content-end' : 'justify-content-start')
 
         // Create icon element
-        let iconElement
+        let iconElement = document.createElement('img')
+        iconElement.classList.add('rounded-circle', 'me-2', 'align-self-end')
         if (isUser) {
-            iconElement = document.createElement('div')
-            iconElement.classList.add('rounded-circle', 'ms-2', 'align-self-end', 'd-flex', 'align-items-center', 'justify-content-center', 'text-white')
-            const userIcon = document.createElement('i')
-            userIcon.classList.add('fa-solid', 'fa-user', 'fa-xs')
-            iconElement.appendChild(userIcon)
+            iconElement.src = USER_ICON_URL
+            iconElement.alt = "User-Icon-Message"
         } else {
-            iconElement = document.createElement('img')
-            iconElement.classList.add('rounded-circle', 'me-2', 'align-self-end')
             iconElement.src = BOT_ICON_URL
             iconElement.alt = "Bot-Icon-Message"
         }

@@ -67,7 +67,7 @@ def register():
         user_repo.add_user(form.username.data, form.email.data, form.password.data, is_professional=False)
     
         # Redirect to login page.
-        flash('Account created successfully! You can now log in.', 'success')
+        flash('Account created successfully!', 'success')
         return redirect(url_for('auth_bp.login'))
 
     # If form is not submitted, render signup page.
