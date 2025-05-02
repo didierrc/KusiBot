@@ -96,6 +96,68 @@ async function getConversationHistory(userId) {
 
 }
 
+function getBadgeClassForInterpretation(interpretation) {
+    const interpretationLower = interpretation.toLowerCase()
+
+    if (interpretationLower.includes('severe'))
+        return 'bg-danger'
+    else if (interpretationLower.includes('moderate'))
+        return 'bg-warning text-dark'
+    else if (interpretationLower.includes('mild'))
+        return 'bg-info text-dark'
+    else if (interpretationLower.includes('minimal'))
+        return 'bg-success'
+    else
+        return 'bg-secondary'
+}
+
+function createCollapseBodyAssessment(assessment) {
+    
+    const assessmentBody = document.createElement('div');
+    assessmentBody.classList.add('accordion-body');
+
+    // Check if question data is available
+    if (assessment.questions && assessment.questions.length > 0) {
+        
+        // Create the table for questions and answers
+        const table = document.createElement('table')
+        table.className = 'table table-sm table-striped table-hover caption-top'
+
+        // Add Caption
+        const caption = table.createCaption()
+        caption.innerHTML = `<strong>Details for ${assessment.assessment_type}</strong> (Score: ${assessment.total_score})`
+
+        // Create Table Header
+        const thead = table.createTHead()
+        const headerRow = thead.insertRow()
+        const headers = ['#', 'Question', 'User Response', 'Score']
+        headers.forEach(text => {
+            const th = document.createElement('th')
+            th.scope = "col"
+            th.textContent = text
+            headerRow.appendChild(th)
+        })
+
+        // Create Table Body
+        const tbody = table.createTBody();
+        assessment.questions.forEach(q => {
+            const row = tbody.insertRow();
+            row.insertCell().textContent = q.question_number ?? '-'
+            row.insertCell().textContent = q.question_text ?? 'N/A'
+            row.insertCell().textContent = q.user_response ?? '-'
+            row.insertCell().textContent = q.categorized_value ?? '-'
+        });
+
+        // Append the table to the body
+        assessmentBody.appendChild(table)
+
+    } else
+        assessmentBody.textContent = 'Detailed question data not available for this assessment.';
+
+    // Return the populated accordion body element
+    return assessmentBody;
+}
+
 async function getAssessmentsHistory(userId) {
 
     try {
@@ -108,63 +170,61 @@ async function getAssessmentsHistory(userId) {
 
         if (!data.assessments || data.assessments.length === 0) {
             const pNoAssessments = document.createElement('p')
-            pNoAssessments.innerHTML = 'No assessments found'
+            pNoAssessments.innerHTML = 'No assessments found for this user.'
             return [pNoAssessments]
         }
 
         // Create assessments divs
         let div_assessments = []
-        for (const assessment of data.assessments) {
+        data.assessments.forEach((assessment, index) => {
 
-            console.log(assessment)
+            const assessmentID = `assessment-${assessment.id || index}`
 
+            // Create main accordion item container
             const assessmentAccordion = document.createElement('div')
             assessmentAccordion.classList.add('accordion-item')
 
+            // Create header for the accordion item
             const assessmentHeader = document.createElement('h2')
             assessmentHeader.classList.add('accordion-header')
-            assessmentHeader.id = `assesmentHeading-${assessment.id}`
+            assessmentHeader.id = `heading-${assessmentID}`
 
             const assessmentButton = document.createElement('button')
-            assessmentButton.classList.add('accordion-button')
-            assessmentButton.classList.add('collapsed')
+            assessmentButton.className = 'accordion-button collapsed'
             assessmentButton.setAttribute('type', 'button')
             assessmentButton.setAttribute('data-bs-toggle', 'collapse')
-            assessmentButton.setAttribute('data-bs-target', `#collapseAssesment-${assessment.id}`)
+            assessmentButton.setAttribute('data-bs-target', `#collapse-${assessmentID}`)
             assessmentButton.setAttribute('aria-expanded', 'false')
-            assessmentButton.setAttribute('aria-controls', `collapseAssesment-${assessment.id}`)
+            assessmentButton.setAttribute('aria-controls', `collapse-${assessmentID}`)
 
+            // Populate the button with assessment details
             const assessmentStrong = document.createElement('strong')
             assessmentStrong.textContent = assessment.assessment_type
             assessmentButton.appendChild(assessmentStrong)
-            assessmentButton.appendChild(document.createTextNode(`, Taken on: ${new Date(assessment.start_time).toLocaleString()}`))
+            assessmentButton.appendChild(document.createTextNode(` - Completed: ${new Date(assessment.end_time).toLocaleString()}`))
 
             const assessmentBadge = document.createElement('span')
-            assessmentBadge.classList.add('badge')
-            assessmentBadge.classList.add('bg-primary')
-            assessmentBadge.classList.add('ms-2')
+            const badgeClass = getBadgeClassForInterpretation(assessment.interpretation)
+            assessmentBadge.className = `badge ${badgeClass} ms-auto`
             assessmentBadge.textContent = `Interpretation: ${assessment.interpretation}`
             assessmentButton.appendChild(assessmentBadge)
 
             assessmentHeader.appendChild(assessmentButton)
             assessmentAccordion.appendChild(assessmentHeader)
 
+            // Create collapse div for the accordion item
             const assessmentCollapse = document.createElement('div')
-            assessmentCollapse.id = `collapseAssesment-${assessment.id}`
-            assessmentCollapse.classList.add('accordion-collapse')
-            assessmentCollapse.classList.add('collapse')
-            assessmentCollapse.setAttribute('aria-labelledby', `assesmentHeading-${assessment.id}`)
+            assessmentCollapse.id = `collapse-${assessmentID}`
+            assessmentCollapse.className = 'accordion-collapse collapse'
+            assessmentCollapse.setAttribute('aria-labelledby', `heading-${assessmentID}`)
             assessmentCollapse.setAttribute('data-bs-parent', '#assessmentsAccordion')
 
-            const assessmentBody = document.createElement('div')
-            assessmentBody.classList.add('accordion-body')
-            assessmentBody.textContent = `Fetching assessment details...`
-
-            assessmentCollapse.appendChild(assessmentBody)
+            // Adding body to the collapse div
+            assessmentCollapse.appendChild(createCollapseBodyAssessment(assessment))
             assessmentAccordion.appendChild(assessmentCollapse)
-
             div_assessments.push(assessmentAccordion)
-        }
+
+        })
 
         return div_assessments
     } catch (error) {
@@ -196,8 +256,10 @@ async function updateUserDataArea(userId, userName) {
 
     // Populate Assessments (Placeholder Example)
     if (assessmentsAccordion) {
+        document.querySelector('.loadingAssessments').classList.remove('d-none')
         assessmentsAccordion.innerHTML = ''
         assessmentsAccordion.append(...await getAssessmentsHistory(userId))
+        document.querySelector('.loadingAssessments').classList.add('d-none')
     }
 
 }
