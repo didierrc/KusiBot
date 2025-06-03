@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
-from kusibot.api.auth.forms import RegisterForm, LoginForm
-from kusibot.api.auth.utils import redirect_to_principal_page
+from kusibot.app.auth.forms import RegisterForm, LoginForm
+from kusibot.app.auth.utils import redirect_to_principal_page
 from kusibot.services import (
     AuthService,
     ChatbotService
@@ -11,7 +11,7 @@ from kusibot.services import (
 # Handling user authentication
 #########################################
 
-auth_bp = Blueprint('auth_bp', __name__)
+auth_bp = Blueprint('auth_bp', __name__, template_folder='templates', static_folder='static')
 auth_service = AuthService()
 chatbot_service = ChatbotService()
 

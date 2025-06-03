@@ -6,10 +6,12 @@ from flask import render_template
 from kusibot.database.models import User
 from config import config
 from kusibot.database.db import init_db
-from kusibot.api.main.routes import main_bp
-from kusibot.api.auth.routes import auth_bp
-from kusibot.api.chatbot.routes import chatbot_bp
-from kusibot.api.professional.routes import professional_bp
+from kusibot.app import (
+    main_bp,
+    auth_bp,
+    chatbot_bp,
+    professional_bp
+)
 from kusibot.chatbot.chatbot import Chatbot
 from kusibot.dashboard.dashboard import Dashboard
 from dotenv import load_dotenv
@@ -47,8 +49,8 @@ def create_app(config_name):
 
   # Creating Flask instance with common templates and static folders.
   app = Flask(__name__,
-            template_folder='kusibot/api/frontend/templates',
-            static_folder='kusibot/api/frontend/static')
+            template_folder='kusibot/app/templates',
+            static_folder='kusibot/app/static')
   
   # Load selected configuration object to the Flask app.
   app.config.from_object(app_config)

@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 # Handling chatbot interactions kusibot kusibot123
 #########################################
 
-chatbot_bp = Blueprint('chatbot_bp', __name__)
+chatbot_bp = Blueprint('chatbot_bp', __name__, template_folder='templates', static_folder='static')
 
 @chatbot_bp.route('/', methods=['GET'])
 @login_required

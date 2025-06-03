@@ -4,7 +4,7 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
 
                     <!-- Bot Icon -->
                     {% if not message.is_user %}
-                    <img src="{{ url_for('static', filename='images/kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
+                    <img src="{{ url_for('static', filename='kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
                     {% endif %}
 
                     <!-- Message Div -->
@@ -48,7 +48,7 @@
 
                     <!-- User Icon -->
                     {% if message.is_user %}
-                    <img src="{{ url_for('static', filename='images/user_icon.png') }}" alt="User-Icon-Message" class="rounded-circle me-2 align-self-end">
+                    <img src="{{ url_for('static', filename='user_icon.png') }}" alt="User-Icon-Message" class="rounded-circle me-2 align-self-end">
                     {% endif %}
 
                 </div>
@@ -56,7 +56,7 @@
 
             <!-- Typing indicator -->
             <div id="typing-indicator" class="d-none mb-3 justify-content-start align-items-center">
-                 <img src="{{ url_for('static', filename='images/kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
+                 <img src="{{ url_for('static', filename='kusibot_icon.png') }}" alt="Bot-Icon-Message" class="rounded-circle me-2 align-self-end">
                  <div class="p-2 px-3 rounded bg-light border text-muted fst-italic">
                     <span></span><span></span><span></span>
                  </div>
@@ -87,8 +87,8 @@
     {{ super()}}
     <script type="text/javascript">
         const CHAT_URL = "{{ url_for('chatbot_bp.chat') }}"
-        const BOT_ICON_URL = "{{ url_for('static', filename='images/kusibot_icon.png') }}"
-        const USER_ICON_URL = "{{ url_for('static', filename='images/user_icon.png') }}"
+        const BOT_ICON_URL = "{{ url_for('static', filename='kusibot_icon.png') }}"
+        const USER_ICON_URL = "{{ url_for('static', filename='user_icon.png') }}"
     </script>
     <script text="text/javascript" src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 {% endblock %}

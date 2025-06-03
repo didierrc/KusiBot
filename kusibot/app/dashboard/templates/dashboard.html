@@ -4,7 +4,7 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -151,5 +151,5 @@
     <script type="text/javascript">
         const DASHBOARD_URL = "{{ url_for('professional_bp.dashboard') }}"
     </script>
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}
