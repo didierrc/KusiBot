@@ -7,6 +7,15 @@ from flask_bcrypt import Bcrypt
 class UserRepository:
 
     def get_user_by_username(self, username):
+        """
+        Retrieve a user by their username.
+
+        Parameters:
+            username (str): The username of the user to retrieve.
+        Returns:
+            User: The user object if found, otherwise None.
+        """
+
         try:
             return db.session.query(User).filter_by(username=username).first()
         except Exception as e:
@@ -14,10 +23,20 @@ class UserRepository:
             db.session.rollback()
             return None
         
-    def add_user(self, username, email, password, is_professional=False):
+    def add_user(self, username, email, hashed_password, is_professional):
+        """
+        Add a new user to the database.
+
+        Parameters:
+            username (str): The username of the new user.
+            email (str): The email of the new user.
+            hashed_password (str): The hashed password of the new user.
+            is_professional (bool): Whether the user is a professional user or not.
+        Returns:
+            User: The newly created user object if successful, otherwise None.
+        """
+
         try:
-            # Hash the password
-            hashed_password = Bcrypt().generate_password_hash(password).decode('utf-8')
             # Create a new professional user
             professional = User(username=username,
                                 email=email,

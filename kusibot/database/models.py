@@ -11,10 +11,6 @@ class User(UserMixin, db.Model):
     """
     User model for the database.
 
-    ## Inherits:
-        **UserMixin**: Flask-Login class.
-        **db.Model**: SQLAlchemy model class.
-
     Attributes:
         id (int): User ID.
         username (str): User's username.
@@ -37,13 +33,24 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username!r}. Email: {self.email!r}. Professional: {self.is_professional!r}>'
+    
+    def check_password(self, password):
+        """
+        Check if the provided password matches the user's password.
+
+        Parameters:
+            password (str): The password to check.
+        
+        Returns:
+            bool: True if the password matches, False otherwise.
+        """
+        
+        from app import bcrypt
+        return bcrypt.check_password_hash(self.password, password)
 
 class Conversation(db.Model):
     """
     Conversation model for the database.
-
-    ## Inherits:
-        **db.Model**: SQLAlchemy model class.
 
     Attributes:
         id (int): Conversation ID.
@@ -65,9 +72,6 @@ class Conversation(db.Model):
 class Message(db.Model):
     """
     Message model for the database.
-    
-    ## Inherits:
-        **db.Model**: SQLAlchemy model class.
 
     Attributes:
         id (int): Message ID.
@@ -93,9 +97,6 @@ class Message(db.Model):
 class Assessment(db.Model):
     """
     Assessment model for the database.
-
-    ## Inherits:
-        **db.Model**: SQLAlchemy model class.
 
     Attributes:
         id (int): Assessment ID.
@@ -129,9 +130,6 @@ class Assessment(db.Model):
 class AssessmentQuestion(db.Model):
     """
     AssessmentQuestion model for the database.
-    
-    ## Inherits:
-        **db.Model**: SQLAlchemy model class.
 
     Attributes:
         id (int): AssessmentQuestion ID.

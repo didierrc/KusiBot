@@ -4,7 +4,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask import render_template
 from kusibot.database.models import User
-from kusibot.config import config
+from config import config
 from kusibot.database.db import init_db
 from kusibot.api.main.routes import main_bp
 from kusibot.api.auth.routes import auth_bp
@@ -15,15 +15,20 @@ from kusibot.dashboard.dashboard import Dashboard
 from dotenv import load_dotenv
 import os
 
-#############################################
-# Main entry point for the whole application.
-#############################################
+##############################################
+# Main entry point for the whole application #
+##############################################
 
 # Load environment variables from .env file.
 load_dotenv()
 
 # Initialise Bcrypt module for encryption.
 bcrypt = Bcrypt()
+
+CHATBOT_URL = "chatbot_bp.chatbot"
+DASHBOARD_URL = "professional_bp.dashboard"
+LOGIN_URL = "auth_bp.login"
+MAIN_URL = "main_bp.index"
 
 def create_app(config_name):
   """

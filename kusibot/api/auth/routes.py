@@ -1,28 +1,31 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
-from flask_bcrypt import Bcrypt
 from kusibot.api.auth.forms import RegisterForm, LoginForm
-from kusibot.database.db_repositories import UserRepository
 from kusibot.api.auth.utils import redirect_to_principal_page
+from kusibot.services import (
+    AuthService,
+    ChatbotService
+)
 
 #########################################
 # Handling user authentication
 #########################################
 
 auth_bp = Blueprint('auth_bp', __name__)
-bcrypt = Bcrypt()
+auth_service = AuthService()
+chatbot_service = ChatbotService()
 
-ERROR_MESSAGES = {
+MESSAGES = {
     'invalid_login': 'Invalid username or password.',
+    'registration_success': 'Registration successful! You can now log in.',
+    'registration_error': 'An error occurred during registration. Please try again.'
 }
-
-CHATBOT_URL = "chatbot_bp.chatbot"
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Login route for the application.Accepts the following methods:
-    - GET: Goes to principal page if authenticated, else, goes to Login.
+    Login route for KusiBot. Accepts the following methods:
+    - GET: Goes to principal page if authenticated, else, goes to Login Page.
     - POST: Log in a user to Kusibot given its username and password.
     """
 
@@ -35,27 +38,30 @@ def login():
     
     # If form is submitted, validate the form data.
     if form.validate_on_submit():
-        
-        # Check if user exists and password is correct.
-        user_repo = UserRepository()
-        user = user_repo.get_user_by_username(form.username.data)
-        
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+
+        user = auth_service.possible_login(form.username.data, 
+                                           form.password.data)
+
+        if user:
             login_user(user, remember=form.remember.data)
             return redirect_to_principal_page(user.is_professional)
         else:
-            flash(ERROR_MESSAGES['invalid_login'], "error")
-    
+            flash(MESSAGES["invalid_login"], "error")
+        
     # If form is not submitted, render login page.
     return render_template("login.html", form=form)
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
-def register():
-    """Register route for the application."""
+def signup():
+    """
+    Register route for KusiBot. Accepts the following methods:
+    - GET: Goes to principal page if authenticated, else, goes to Register Page.
+    - POST: Register a new user in KusiBot.
+    """
 
-    # If user is already authenticated, redirect to chatbot.
+    # If user is already authenticated, redirect to principal page
     if current_user.is_authenticated:
-        return redirect(url_for(CHATBOT_URL))
+        return redirect_to_principal_page(current_user.is_professional)
     
     # If user is not authenticated, create register form object.
     form = RegisterForm()
@@ -63,21 +69,32 @@ def register():
     # If form is submitted, validate the form data.
     if form.validate_on_submit():
     
-        user_repo = UserRepository()
-        user_repo.add_user(form.username.data, form.email.data, form.password.data, is_professional=False)
-    
-        # Redirect to login page.
-        flash('Account created successfully!', 'success')
-        return redirect(url_for('auth_bp.login'))
+        # Register a USER (not a professional)
+        success_register = auth_service.register(form.username.data, 
+                                                 form.email.data, 
+                                                 form.password.data)
+
+        if success_register:
+            flash(MESSAGES["registration_success"], "success")
+            
+            from app import LOGIN_URL
+            return redirect(url_for(LOGIN_URL))
+        else:
+            flash(MESSAGES["registration_error"], "error")
 
     # If form is not submitted, render signup page.
-    return render_template('signup.html', form=form)
+    return render_template("signup.html", form=form)
 
 @auth_bp.route("/logout")
 @login_required
 def logout():
-    """Logout route for the application."""
+    """
+    Logs out an authenticated user from KusiBot. Accepts the following methods:
+    - GET: Logs out, ends any current conversation and returns to Main Page.
+    """
 
-    current_app.chatbot.end_conversation(current_user.id)
+    chatbot_service.end_conversation(current_user.id)
     logout_user()
-    return redirect(url_for("main_bp.index"))
+
+    from app import MAIN_URL
+    return redirect(url_for(MAIN_URL))

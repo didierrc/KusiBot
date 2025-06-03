@@ -1,20 +1,20 @@
 from flask import redirect, url_for
 
-CHATBOT_URL = "chatbot_bp.chatbot"
-DASHBOARD_URL = "professional_bp.dashboard"
-
-def redirect_to_principal_page(is_professional: bool):
+def redirect_to_principal_page(is_professional):
     """
-    Redirects the current user (authenticated) to its corresponding
+    Redirects the authenticated current user to its corresponding
     principal page.
     
     - USER: Goes to /chatbot
     - PROFESSIONAL: Goes to /internal/dashboard
     
-    ## Parameters
-    is_professional: bool -> True if the user is a professional. False otherwise. 
+    Parameters:
+        is_professional (bool): Indicates if the user is a professional or not.
+    Returns:
+        Response: Redirect response to the user's principal page.
     """
 
+    from app import CHATBOT_URL, DASHBOARD_URL
     if is_professional:
         return redirect(url_for(DASHBOARD_URL))
     return redirect(url_for(CHATBOT_URL))
