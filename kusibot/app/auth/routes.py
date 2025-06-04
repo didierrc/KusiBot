@@ -7,10 +7,6 @@ from kusibot.services import (
     ChatbotService
 )
 
-#########################################
-# Handling user authentication
-#########################################
-
 auth_bp = Blueprint('auth_bp', __name__, template_folder='templates', static_folder='static')
 auth_service = AuthService()
 chatbot_service = ChatbotService()

@@ -1,50 +1,54 @@
 import re, string, torch,json
 from transformers import BertTokenizer, BertForSequenceClassification
 
-BERT_TOKENIZER = "bert-base-uncased"
-CUSTOM_BERT_REPO = "didierrc/MH_BERT"
-TEXT_MAX_LENGTH = 128
-
 class IntentRecognizerAgent:
     """
-    BERT-based intent classifier for the chatbot. 
+    BERT-based intent classifier agent.
     This class is responsible for predicting the intent of the user's input.
     """
 
-    def __init__(self, label_mapping_path=None):
+    BERT_TOKENIZER = "bert-base-uncased"
+    CUSTOM_BERT_REPO = "didierrc/MH_BERT"
+    TEXT_MAX_LENGTH = 128
+
+    def __init__(self):
         """Initializes the BERT intent classifier model and label mapping."""
 
+        # Whether to use GPU or CPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.tokenizer = BertTokenizer.from_pretrained(BERT_TOKENIZER)
         
-        # Load the trained BERT model
-        self.model = BertForSequenceClassification.from_pretrained(CUSTOM_BERT_REPO)
+        # Load the trained BERT model and tokenizer
+        self.tokenizer = BertTokenizer.from_pretrained(self.BERT_TOKENIZER)
+        self.model = BertForSequenceClassification.from_pretrained(self.CUSTOM_BERT_REPO)
         self.model.to(self.device)
         self.model.eval() # Set the model to evaluation mode as we are not training it
 
         # Creating reverse mapping to get the intent from the class index
-        if label_mapping_path:
+        # Try to load label mapping from the Hugging Face repo
+        try:
+            from huggingface_hub import hf_hub_download
+            label_mapping_path = hf_hub_download(
+                repo_id=self.CUSTOM_BERT_REPO, 
+                filename="label_mapping.json"
+            )
             with open(label_mapping_path, 'r') as f:
                 self.label_mapping = json.load(f)
-        else:
-            # Try to load label mapping from the Hugging Face repo
-            try:
-                from huggingface_hub import hf_hub_download
-                label_mapping_path = hf_hub_download(
-                    repo_id=CUSTOM_BERT_REPO, 
-                    filename="label_mapping.json"
-                )
-                with open(label_mapping_path, 'r') as f:
-                    self.label_mapping = json.load(f)
-            except Exception as e:
-                print(f"Error loading label mapping: {e}")
-                raise e            
+        except Exception as e:
+            print(f"Error loading label mapping: {e}")
+            raise e            
 
-        self.reverse_label_mapping = {class_index: intent 
-                                              for intent, class_index in self.label_mapping.items()}
+        self.reverse_label_mapping = {class_index: intent for intent, class_index in self.label_mapping.items()}
 
-    def clean_text(self, text):
-        """Cleans user's text by removing special characters, spaces, etc."""
+    def _clean_text(self, text):
+        """
+        Cleans the input text by removing unwanted characters, links, HTML tags, punctuation, and extra whitespace.
+        Also converts the text to lowercase and removes words containing numbers.
+        
+        Parameters:
+            text: The input text to be cleaned.
+        Returns:
+            str: The cleaned text.
+        """
     
         if isinstance(text, str):
             text = text.lower()                                                 # Lowercase statements
@@ -59,17 +63,24 @@ class IntentRecognizerAgent:
             return text
         return ""
     
-    def get_input_tensors_from_text(self, text):
-        """Tokenizes the text and returns the input tensors for the model."""
+    def _get_input_tensors_from_text(self, text):
+        """
+        Converts the input text into tensors suitable for the BERT model.
+        
+        Parameters:
+            text: The input text to be tokenized.
+        Returns:
+            tuple: A tuple containing the input IDs and attention mask tensors.
+        """
 
         # Clean the text
-        text = self.clean_text(text)
+        text = self._clean_text(text)
 
         # Tokenize text
         encoding = self.tokenizer.encode_plus(
             text,
             add_special_tokens=True,
-            max_length=TEXT_MAX_LENGTH,
+            max_length=self.TEXT_MAX_LENGTH,
             return_token_type_ids=False,
             padding='max_length',
             truncation=True,
@@ -79,11 +90,21 @@ class IntentRecognizerAgent:
 
         return encoding['input_ids'].to(self.device), encoding['attention_mask'].to(self.device)
 
-    def predict_intent(self, text, return_confidence=False):
-        """Predicts the intent of the user's text input."""
+    def predict_intent(self, text):
+        """
+        Predicts the intent of the input text using the BERT model.
+        
+        Parameters:
+            text: The input text for which the intent needs to be predicted.
+            return_confidence: If True, returns the confidence of the prediction.
+            
+        Returns:
+            str: The predicted intent label.
+            float: The confidence of the prediction (if return_confidence is True).
+        """
 
         # Get input tensors
-        input_ids, attention_mask = self.get_input_tensors_from_text(text)
+        input_ids, attention_mask = self._get_input_tensors_from_text(text)
 
         # Get prediction
         with torch.no_grad():
@@ -101,6 +122,4 @@ class IntentRecognizerAgent:
         # Get the intent label
         intent = self.reverse_label_mapping[predicted_class]
         
-        if return_confidence:
-            return intent, confidence
-        return intent
+        return intent, confidence

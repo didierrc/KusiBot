@@ -3,10 +3,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from kusibot.database.db_repositories import MessageRepository
 
 class ConversationAgent:
-  """Handles normal conversation flow."""
+  """
+  LLM-based conversation agent.
+  This class is responsible for engaging in conversations given the user's input.
+  """
 
   CONTEXT_MAX_RETRIEVE_MSG = 10
-  AGENT_TYPE = "Conversation"
   MODEL_NOT_AVAILABLE_RESPONSE = "Sorry, the model is not available at the moment and I'm not able to help you :("
   PROMPT_TEMPLATE = """
 # Agent Persona: KUSIBOT
@@ -41,7 +43,7 @@ Your Response:
 
   def __init__(self, model_name="mistral"):
     """
-    Initialize the Normal Conversation Agent for mental health support.
+    Initialises the ConversationAgent with the specified model.
     """
     
     try:
@@ -56,16 +58,19 @@ Your Response:
     self.msg_repo = MessageRepository()
     
   def generate_response(self, text, conversation_id, intent=None):
+    """
+    Generates a response based on the user's input and the conversation context.
     
-    # Save user message
-    self.msg_repo.save_user_message(
-      conv_id=conversation_id,
-      msg=text,
-      intent=intent
-    )
-
+    Parameters:
+      text (str): The user's input text.
+      conversation_id (int): The ID of the current conversation.
+      intent (str, optional): The detected intent of the user's input. Not used in this agent.
+    Returns:
+      str: The generated response from the model.
+    """
+    
     if not self.model:
-      return self.MODEL_NOT_AVAILABLE_RESPONSE, self.AGENT_TYPE
+      return self.MODEL_NOT_AVAILABLE_RESPONSE
 
     # Fetch last X messages for the context.
     messages = self.msg_repo.get_limited_messages(
@@ -78,6 +83,6 @@ Your Response:
     
     chain = self.prompt | self.model
   
-    return chain.invoke({"chat_history": chat_history, "user_query": text}), self.AGENT_TYPE
+    return chain.invoke({"chat_history": chat_history, "user_query": text})
 
     

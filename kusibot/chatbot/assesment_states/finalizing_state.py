@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import random
 
 class FinalizingState(BaseState):
+    """State for finalizing the assessment after all questions have been answered."""
 
     RESPONSE_VARIATIONS = [
         "Okay, we've finished with those questions. Thanks so much for sharing all of that with me – it really does take courage to open up. Just a gentle reminder, if things ever feel too heavy, talking things through with a professional can make a real difference.",
@@ -50,9 +51,7 @@ class FinalizingState(BaseState):
         # Returning assesment object to the initial state
         # In case another assessment is started
         from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
-        self.context.transition_to_next_state(AskingQuestionState())
-
-        # self.context.get_final_resume(assessment_id)
+        self.context._transition_to_next_state(AskingQuestionState())
         
         # Get the final message
         return random.choice(self.RESPONSE_VARIATIONS)

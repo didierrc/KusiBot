@@ -3,6 +3,7 @@ from kusibot.chatbot.assesment_states.waiting_cat_state import WaitingCategoriza
 import random
 
 class WaitingFreeTextState(BaseState):
+    """State where the user is expected to provide a free text response to the assesment question."""
 
     RESPONSE_VARIATIONS = [
         "Got it, thanks for telling me. Based on what you described, which of these options best fits how often you've felt that way over the last 2 weeks?",
@@ -15,7 +16,7 @@ class WaitingFreeTextState(BaseState):
     def generate_response(self, user_input, conversation_id, assessment_id):
 
         # Get the current question that was asked
-        question_json = self.context.get_question_json(assessment_id)
+        question_json = self.context._get_question_json(assessment_id)
 
         #Building response
         prompt = f"{random.choice(self.RESPONSE_VARIATIONS)}\n"
@@ -24,7 +25,7 @@ class WaitingFreeTextState(BaseState):
         prompt += "\n\n(Just pop the number in)"
 
         # Changing state of AssesmentAgent to WaitingCategorizationState
-        self.context.transition_to_next_state(WaitingCategorizationState())
+        self.context._transition_to_next_state(WaitingCategorizationState())
 
         # Updating Assesment in DB
         self.context.assess_repo.update_assessment(

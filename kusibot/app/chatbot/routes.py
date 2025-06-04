@@ -1,20 +1,18 @@
-from flask import Blueprint, render_template, request, jsonify, current_app
+from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
-
-#########################################
-# Handling chatbot interactions kusibot kusibot123
-#########################################
+from kusibot.services import ChatbotService
 
 chatbot_bp = Blueprint('chatbot_bp', __name__, template_folder='templates', static_folder='static')
+chatbot_service = ChatbotService()
 
 @chatbot_bp.route('/', methods=['GET'])
 @login_required
 def chatbot():
-    """Render the chatbot interface"""
+    """Render the chatbot interface. Requires user to be logged in."""
 
     # Gets the current conversation (last until session expires aka logs out)
     # or Creates a new one
-    convo = current_app.chatbot.create_or_get_conversation(current_user.id)
+    convo = chatbot_service.create_or_get_conversation(current_user.id)
     return render_template('chatbot.html', conversation=convo)
 
 @chatbot_bp.route('/chat', methods=['POST'])
@@ -28,10 +26,9 @@ def chat():
     
     # If no user message, respond with a simple message.
     if not user_message:
-        return jsonify({'response': 'Sorry, but you didn\'t provide any message.'})
-    
-    # Get response from chatbot
-    response = current_app.chatbot.get_response(user_message, current_user.id)
-    
+        return jsonify({'response': chatbot_service.CHATBOT_NO_MSG_PROVIDED})
+        
     # Return chatbot response as JSON
-    return jsonify({'response': response})
+    return jsonify({
+        'response': chatbot_service.get_response(user_message, current_user.id)
+    })

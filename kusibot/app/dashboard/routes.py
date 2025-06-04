@@ -1,10 +1,6 @@
 from flask import Blueprint, render_template, current_app, jsonify, request
 from flask_login import login_required
 
-#########################################
-# Handling professional related routes  #
-#########################################
-
 professional_bp = Blueprint('professional_bp', __name__, template_folder='templates', static_folder='static')
 
 @professional_bp.route('/')

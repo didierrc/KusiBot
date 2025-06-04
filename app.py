@@ -12,7 +12,6 @@ from kusibot.app import (
     chatbot_bp,
     professional_bp
 )
-from kusibot.chatbot.chatbot import Chatbot
 from kusibot.dashboard.dashboard import Dashboard
 from dotenv import load_dotenv
 import os
@@ -74,7 +73,6 @@ def create_app(config_name):
     return User.query.get(int(user_id))
   
   # Setting up logic instances.
-  app.chatbot = Chatbot()
   app.dashboard = Dashboard()
 
   # Registering the blueprints routes for the Flask app.

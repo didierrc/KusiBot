@@ -2,7 +2,6 @@ from kusibot.database.db import db
 from kusibot.database.models import Conversation, Message, Assessment, AssessmentQuestion, User
 from sqlalchemy import func
 from datetime import datetime, timezone
-from flask_bcrypt import Bcrypt
 
 class UserRepository:
 
@@ -179,6 +178,17 @@ class AssessmentRepository:
             print(f"Error retrieving current assessment: {e}")
             db.session.rollback()
             return None
+        
+    def is_assessment_active(self, user_id):
+        """
+        Check if there is an active assessment for the given user.
+
+        Parameters:
+            user_id: The ID of the user to check.
+        Returns:
+            bool: True if an active assessment exists, False otherwise.
+        """
+        return self.get_current_assessment(user_id) is not None
         
     def get_assessment(self, assessment_id):
         try:

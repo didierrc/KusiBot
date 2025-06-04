@@ -1,13 +1,14 @@
 from kusibot.chatbot.assesment_states.base_state import BaseState
 
 class WaitingCategorizationState(BaseState):
+    """State where the user is expected to categorize their response by selecting an option from a list."""
 
     ERROR_NUMBER_RESPONSE = "Sorry, I need the number corresponding to the option. Can you please provide the number?"
 
     def generate_response(self, user_input, conversation_id, assessment_id):
         
         # Get the current question that was asked
-        question_json = self.context.get_question_json(assessment_id)
+        question_json = self.context._get_question_json(assessment_id)
         
         try:
             selected_index = int(user_input.strip()) - 1
@@ -32,7 +33,7 @@ class WaitingCategorizationState(BaseState):
                     
                     # Changing state and triggering finalization
                     from kusibot.chatbot.assesment_states.finalizing_state import FinalizingState
-                    self.context.transition_to_next_state(FinalizingState())
+                    self.context._transition_to_next_state(FinalizingState())
                     
                     return self.context.state.generate_response(
                         user_input,
@@ -44,7 +45,7 @@ class WaitingCategorizationState(BaseState):
                     
                     # Changing state
                     from kusibot.chatbot.assesment_states.asking_question_state import AskingQuestionState
-                    self.context.transition_to_next_state(AskingQuestionState())
+                    self.context._transition_to_next_state(AskingQuestionState())
 
                     # Updating assesment in DB
                     self.context.assess_repo.update_assessment(
