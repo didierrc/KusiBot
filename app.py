@@ -1,8 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-from flask import render_template
 from kusibot.database.models import User
 from config import config
 from kusibot.database.db import init_db
@@ -12,7 +11,6 @@ from kusibot.app import (
     chatbot_bp,
     professional_bp
 )
-from kusibot.dashboard.dashboard import Dashboard
 from dotenv import load_dotenv
 import os
 
@@ -37,7 +35,7 @@ def create_app(config_name):
   following the Application-factory pattern.
   
   Parameters:
-    config_name (str): The configuration name to use [dev/testing/prod].
+    config_name: The configuration name to use [dev/testing/prod].
   
   Returns:
     Flask: The Flask app instance.
@@ -72,9 +70,6 @@ def create_app(config_name):
   def load_user(user_id):
     return User.query.get(int(user_id))
   
-  # Setting up logic instances.
-  app.dashboard = Dashboard()
-
   # Registering the blueprints routes for the Flask app.
   app.register_blueprint(main_bp)
   app.register_blueprint(auth_bp, url_prefix='/auth')
