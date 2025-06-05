@@ -80,36 +80,30 @@ class ChatbotManagerAgent:
             agent_response: JSON response containing the intent detected, response generated, and agent type.
         """
         
+        # If there is no current assessment, we need to get the intent of the user input.
+        # To know if we need to start an assessment or just return a normal response.
+        intent, confidence = self.intent_recognizer.predict_intent(user_input)
+        
         agent_response = {
-            "intent_detected": None,
+            "intent_detected": intent,
             "response": None,
             "type": None
         }
 
-        # If there is no current assessment, we need to get the intent of the user input.
-        # To know if we need to start an assessment or just return a normal response.
-        intent, confidence = self.intent_recognizer.predict_intent(user_input)
-        agent_response["intent_detected"] = intent
+        # Check for conditions to START an assessment
+        should_start_assessment = (
+            confidence >= self.CHATBOT_CONFIDENCE_ASSESMENT_THRESHOLD and 
+            intent != "Normal" and
+            self.assesment_agent.map_intent_to_assessment(intent) is not None
+        )
 
-        # If BERT has low confidence in the intent or the intent is "Normal", we just return a normal response.
-        response = None
-        if confidence < self.CHATBOT_CONFIDENCE_ASSESMENT_THRESHOLD or intent == "Normal":
-            
-            response = self.conversation_agent.generate_response(user_input, conversation_id, intent)
+        # Handle the two cases based on the check above
+        if should_start_assessment:
+            agent_response["response"] = self.assesment_agent.generate_response(user_input, conversation_id, intent)
+            agent_response["type"] = self.CHATBOT_ASSESSMENT_AGENT_TYPE
+        else:
+            agent_response["response"] = self.conversation_agent.generate_response(user_input, conversation_id, intent)
             agent_response["type"] = self.CHATBOT_CONVERSATION_AGENT_TYPE
-
-        else: # Start a new assesment --> Signs of depression, anxiety, etc.
-            
-            if self.assesment_agent.map_intent_to_assessment(intent): # If there is a questionnaire for the intent. Start it.
-                
-                response = self.assesment_agent.generate_response(user_input, conversation_id, intent)
-                agent_response["type"] = self.CHATBOT_ASSESSMENT_AGENT_TYPE
-            
-            else:  # If there is no questionnaire for the intent, just return a response from conversational agent.
-                
-                response = self.conversation_agent.generate_response(user_input, conversation_id, intent)
-                agent_response["type"] = self.CHATBOT_CONVERSATION_AGENT_TYPE
         
-        agent_response["response"] = response
         return agent_response
 
