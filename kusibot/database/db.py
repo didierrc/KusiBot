@@ -17,19 +17,28 @@ def init_db(app):
     Initialising DB (SQLAlchemy) with Flask app.
     
     Parameters:
-        app (Flask): The Flask app instance.
+        app: The Flask app instance.
     """
 
     # Initialize SQLAlchemy with the app
     db.init_app(app)
 
-    # Initialize Flask-migrate: Useful when developing for DB changes.
+    # Initialize Flask-migrate: Useful when developing for DB SCHEMA CHANGES.
     migrate.init_app(app, db, directory='kusibot/database/migrations')
 
     # Creating tables and Professional User
     initialise_data(app, db)
     
 def initialise_data(app,db):
+    """
+    Initialises the database creating all its tables and the UNIQUE professional user who has access
+    to the non-professional users conversations and insights.
+
+    Parameters:
+        app: The Flask app instance.
+        db: The SQLAlchemy instance.
+    """
+
     with app.app_context():
 
         db.create_all()

@@ -6,7 +6,7 @@ import os, pathlib
 #####################################################################
 
 # Get the base directory of the current project.
-BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+BASE_DIR = pathlib.Path(__file__).resolve()
 DEFAULT_SQL = f'sqlite:///{BASE_DIR}/instance/kusibot.db'
 
 class Config:

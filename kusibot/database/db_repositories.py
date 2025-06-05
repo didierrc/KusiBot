@@ -51,6 +51,13 @@ class UserRepository:
             return None
         
     def get_non_professional_users(self):
+        """
+        Retrieve all non-professional users from the database.
+        
+        Returns:
+            list: A list of non-professional User objects.
+        """
+
         try:
             return db.session.query(User).filter_by(is_professional=False).all()
         except Exception as e:
@@ -61,6 +68,15 @@ class UserRepository:
 class ConversationRepository:
 
     def get_current_conversation_by_user_id(self, user_id):
+        """
+        Retrieve the current conversation (not finished) for a given user.
+
+        Parameters:
+            user_id: The ID of the user whose current conversation is to be retrieved.
+        Returns:
+            Conversation: The current conversation object if found, otherwise None.
+        """
+
         try:
             return db.session.query(Conversation)\
                              .filter_by(user_id=user_id, finished_at=None)\
@@ -71,6 +87,15 @@ class ConversationRepository:
             return None
         
     def get_last_conversation_by_user_id(self, user_id):
+        """
+        Retrieve the last conversation (finished or not) for a given user.
+        
+        Parameters:
+            user_id: The ID of the user whose last conversation is to be retrieved.
+        Returns:
+            Conversation: The last conversation object if found, otherwise None.
+        """
+
         try:
             return db.session.query(Conversation)\
                              .filter_by(user_id=user_id)\
@@ -82,6 +107,15 @@ class ConversationRepository:
             return None
         
     def create_conversation(self, user_id):
+        """
+        Create a new conversation for a given user.
+
+        Parameters:
+            user_id: The ID of the user for whom the conversation is to be created.
+        Returns:
+            Conversation: The newly created conversation object if successful, otherwise None.
+        """
+
         try:
             new_conversation = Conversation(user_id=user_id,
                                             created_at=datetime.now(timezone.utc))
@@ -94,6 +128,15 @@ class ConversationRepository:
             return None
         
     def get_conversation(self, conv_id):
+        """
+        Retrieve a conversation by its ID.
+        
+        Parameters:
+            conv_id: The ID of the conversation to retrieve.
+        Returns:
+            Conversation: The conversation object if found, otherwise None.
+        """
+
         try:
             return db.session.query(Conversation).filter_by(id=conv_id).first()
         except Exception as e:
@@ -102,6 +145,13 @@ class ConversationRepository:
             return None
         
     def end_conversation(self, conv_id):
+        """
+        End the given conversation by setting its finished_at timestamp.
+
+        Parameters:
+            conv_id: The ID of the conversation to end.
+        """
+
         try:
             conversation = self.get_conversation(conv_id)
             if conversation:
@@ -114,6 +164,16 @@ class ConversationRepository:
 class MessageRepository:
 
     def save_chatbot_message(self, conv_id, msg, intent=None, agent_type="Conversation"):
+        """
+        Save a chatbot message to the conversation stored in database.
+
+        Parameters:
+            conv_id: The ID of the conversation to which the message belongs.
+            msg: The text of the chatbot message.
+            intent: The intent of the message, if applicable (generally, it does not).
+            agent_type: The type of agent sending the message (default is the ConversationAgent).
+        """
+
         try:
             message = Message(
                 conversation_id=conv_id,
@@ -130,6 +190,15 @@ class MessageRepository:
             db.session.rollback()
 
     def save_user_message(self, conv_id, msg, intent=None):
+        """
+        Save a user message to the conversation stored in database.
+        
+        Parameters:
+            conv_id: The ID of the conversation to which the message belongs.
+            msg: The text of the user message.
+            intent: The intent of the message, if applicable.
+        """
+
         try:
             message = Message(
                 conversation_id=conv_id,
@@ -145,6 +214,16 @@ class MessageRepository:
             db.session.rollback()
 
     def get_limited_messages(self, conv_id, limit):
+        """
+        Retrieve the last <limit> messages from a conversation, ordered by timestamp.
+
+        Parameters:
+            conv_id: The ID of the conversation from which to retrieve messages.
+            limit: The maximum number of messages to retrieve.
+        Returns:
+            list: A list of Message objects.
+        """
+
         try:
             return db.session.query(Message)\
                              .filter_by(conversation_id=conv_id)\
@@ -157,6 +236,15 @@ class MessageRepository:
             return []
         
     def get_messages_by_conversation_id(self, conv_id):
+        """
+        Retrieve all messages from a conversation, ordered by timestamp.
+
+        Parameters:
+            conv_id: The ID of the conversation from which to retrieve messages.
+        Returns:
+            list: A list of Message objects.
+        """
+
         try:
             return db.session.query(Message)\
                              .filter_by(conversation_id=conv_id)\
@@ -170,6 +258,15 @@ class MessageRepository:
 class AssessmentRepository:
 
     def get_current_assessment(self, user_id):
+        """
+        Retrieve the current assessment (not finished) for a given user.
+
+        Parameters:
+            user_id: The ID of the user whose current assessment is to be retrieved.
+        Returns:
+            Assessment: The current assessment object if found, otherwise None.
+        """
+
         try:
             return db.session.query(Assessment)\
                              .filter_by(user_id=user_id, end_time=None)\
@@ -191,6 +288,15 @@ class AssessmentRepository:
         return self.get_current_assessment(user_id) is not None
         
     def get_assessment(self, assessment_id):
+        """
+        Retrieve an assessment by its ID.
+
+        Parameters:
+            assessment_id: The ID of the assessment to retrieve.
+        Returns:
+            Assessment: The assessment object if found, otherwise None.
+        """
+
         try:
             return db.session.query(Assessment).filter_by(id=assessment_id).first()
         except Exception as e:
@@ -199,6 +305,17 @@ class AssessmentRepository:
             return None
         
     def create_assessment(self, user_id, assessment_type, state):
+        """
+        Create a new assessment for a given user.
+
+        Parameters:
+            user_id: The ID of the user for whom the assessment is to be created.
+            assessment_type: The type of the assessment (e.g., "PHQ9", "GAD7").
+            state: The initial state of the assessment (e.g., "AskingQuestion state").
+        Returns:
+            Assessment: The newly created assessment object if successful, otherwise None.
+        """
+
         try:
             new_assessment = Assessment(
                 user_id=user_id,
@@ -215,6 +332,14 @@ class AssessmentRepository:
             return None
         
     def update_assessment(self, assessment_id, **kwargs):
+        """
+        Update an existing assessment with new values.
+
+        Parameters:
+            assessment_id: The ID of the assessment to update.
+            **kwargs: The fields to update and their new values.
+        """
+
         try:
             assessment = self.get_assessment(assessment_id)
             if assessment:
@@ -226,6 +351,15 @@ class AssessmentRepository:
             db.session.rollback()
 
     def calculate_total_score(self, assessment_id):
+        """
+        Calculate the total score of an assessment by summing the values of its questions.
+
+        Parameters:
+            assessment_id: The ID of the assessment for which to calculate the total score.
+        Returns:
+            int: The total score of the assessment, or 0 if no questions are found or an error occurred.
+        """
+
         try:
             total_score = db.session.query(func.sum(AssessmentQuestion.categorized_value))\
                                     .filter(AssessmentQuestion.assessment_id == assessment_id)\
@@ -237,6 +371,15 @@ class AssessmentRepository:
             return 0
         
     def get_assessments_by_user_id(self, user_id):
+        """
+        Retrieve all assessments for a given user, ordered by start time in descending order.
+
+        Parameters:
+            user_id: The ID of the user whose assessments are to be retrieved.
+        Returns:
+            list: A list of Assessment objects.
+        """
+
         try:
             return db.session.query(Assessment)\
                              .filter_by(user_id=user_id)\
@@ -250,6 +393,15 @@ class AssessmentRepository:
 class AssessmentQuestionRepository:
     
     def get_question_by_assessment_id(self, assessment_id):
+        """
+        Retrieve all questions for a given assessment, ordered by question number.
+
+        Parameters:
+            assessment_id: The ID of the assessment whose questions are to be retrieved.
+        Returns:
+            list: A list of AssessmentQuestion objects.
+        """
+
         try:
             return db.session.query(AssessmentQuestion)\
                              .filter_by(assessment_id=assessment_id)\
@@ -261,6 +413,17 @@ class AssessmentQuestionRepository:
             return []
     
     def save_assessment_question(self, assessment_id, question_number, question_text, user_response, categorized_value):
+        """
+        Save an assessment question to the database.
+
+        Parameters:
+            assessment_id: The ID of the assessment to which the question belongs.
+            question_number: The number of the question in the assessment.
+            question_text: The text of the question.
+            user_response: The user's free-text response to the question.
+            categorized_value: The categorized value of the user's response (depends on questionnaire).
+        """
+
         try:
             assessment_question = AssessmentQuestion(
                 assessment_id=assessment_id,
