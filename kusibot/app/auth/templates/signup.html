@@ -31,5 +31,5 @@
 
 {% block scripts_body %}
 {{ super() }}
-<script src="{{ url_for('static', filename='auth.js') }}"></script>
+<script src="{{ url_for('auth_bp.static', filename='auth.js') }}"></script>
 {% endblock %}

@@ -53,5 +53,7 @@ def initialise_data(app,db):
         
         user = user_repo.get_user_by_username(professional_username)
         if not user:
+            from app import bcrypt
+            professional_password = bcrypt.generate_password_hash(professional_password).decode('utf-8')
             user_repo.add_user(professional_username, professional_email, professional_password, is_professional=True)
             print(f"Professional user {professional_username} created.")

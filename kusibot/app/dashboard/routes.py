@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, current_app, jsonify, request
+from flask import Blueprint, render_template, jsonify, request
 from flask_login import login_required
 from kusibot.services import (
     DashboardService

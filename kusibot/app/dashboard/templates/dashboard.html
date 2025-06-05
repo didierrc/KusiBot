@@ -4,7 +4,7 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('professional_bp.static', filename='dashboard.css') }}">
 {% endblock %}
 
 {% block main %}
@@ -105,17 +105,17 @@
                 <h4 class="mb-3">Viewing Data for: <span id="selectedUsername" class="fw-bold"></span></h4>
 
                 <!-- Data Tabs -->
-                <ul class="nav nav-tabs mb-3" id="userDataTabs" role="tablist">
+                <ul class="nav nav-tabs mb-3" id="userDataTabs">
                     
                     <!-- Conversation Tab -->
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item">
                         <button class="nav-link active" id="conversationsTab" data-bs-toggle="tab" data-bs-target="#conversationsPanel" type="button" role="tab" aria-controls="conversationsPanel" aria-selected="true">
                             <i class="fas fa-comments me-1"></i> Conversations
                         </button>
                     </li>
 
                     <!-- Assesment Tab -->
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item">
                         <button class="nav-link" id="assessmentsTab" data-bs-toggle="tab" data-bs-target="#assessmentsPanel" type="button" role="tab" aria-controls="assessmentsPanel" aria-selected="false">
                             <i class="fas fa-clipboard-list me-1"></i> Assessments
                         </button>
@@ -151,5 +151,5 @@
     <script type="text/javascript">
         const DASHBOARD_URL = "{{ url_for('professional_bp.dashboard') }}"
     </script>
-    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('professional_bp.static', filename='dashboard.js') }}"></script>
 {% endblock %}

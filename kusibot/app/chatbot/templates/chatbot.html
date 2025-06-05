@@ -4,7 +4,7 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('chatbot_bp.static', filename='chatbot.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -90,5 +90,5 @@
         const BOT_ICON_URL = "{{ url_for('static', filename='kusibot_icon.png') }}"
         const USER_ICON_URL = "{{ url_for('static', filename='user_icon.png') }}"
     </script>
-    <script text="text/javascript" src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script text="text/javascript" src="{{ url_for('chatbot_bp.static', filename='chatbot.js') }}"></script>
 {% endblock %}
