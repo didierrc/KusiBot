@@ -27,9 +27,10 @@
                     KusiBot operates using a Multi-Agent System architecture:
                 </p>
                 <ul>
-                    <li><strong>Dialogue Manager Agent:</strong> Understands your input using BERT - an AI language model - to determine the intent behind your messages.</li>
-                    <li><strong>Normal Conversation Agent:</strong> Handles the general flow of conversation, making the interaction feel natural, powered by Mistral (a Large Language Model - LLM).</li>
-                    <li><strong>Assessment Agent:</strong> Administers standardized mental health questionnaires when a warning intent is detected, currently including the <strong>PHQ-9 (for Depression)</strong> and <strong>GAD-7 (for Anxiety)</strong>, guiding you through the questions to assess you so other professionals can check out your status.</li>
+                    <li><strong>Manager Agent:</strong>Orchestrates your input messages routing it to the specific agent.</li>
+                    <li><strong>Intent Recogniser Agent:</strong>Understands your input using BERT - an AI language model - to determine the intent behind your messages.</li>
+                    <li><strong>Conversation Agent:</strong>Handles the general flow of conversation, making the interaction feel natural, powered by Mistral 7B (a Large Language Model - LLM).</li>
+                    <li><strong>Assessment Agent:</strong>Administers standardised mental health questionnaires when a warning intent is detected, currently including the <strong>PHQ-9 (for Depression)</strong> and <strong>GAD-7 (for Anxiety)</strong>, guiding you through the questions to assess you so other professionals can check out your status.</li>
                 </ul>
                 <p>
                     This approach allows KusiBot to manage different aspects of the conversation effectively, from casual chat to structured assessment.
@@ -48,13 +49,6 @@
                         <strong>If you are experiencing a mental health crisis, please do not rely on KusiBot.</strong> Contact your local emergency services or a crisis hotline immediately.
                     </p>
                 </div>
-            </section>
-
-            <section class="mb-4">
-                 <h2 class="h4">Data Privacy & Ethics</h2>
-                <p>
-                    We take user privacy seriously. While this is a student project, KusiBot is developed with data security principles in mind. User interactions are handled with confidentiality as a priority within the project's scope.
-                </p>
             </section>
         </div>
     </div>
