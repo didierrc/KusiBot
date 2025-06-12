@@ -54,7 +54,7 @@ class ChatbotService:
         
         return [{'text': msg.text, 
                  'is_user': msg.is_user,
-                 'timestamp': msg.timestamp.isoformat()} 
+                 'timestamp': msg.timestamp.isoformat() + 'Z'} 
                  for msg in messages]
     
     def get_response(self, user_input, user_id):
