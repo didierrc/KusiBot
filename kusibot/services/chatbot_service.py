@@ -81,16 +81,16 @@ class ChatbotService:
         # Saving user message first
         self.msg_repo.save_user_message(conv_id=current_conv.id,
                                         msg=user_input,
-                                        intent=bot_response.intent_detected)
+                                        intent=bot_response["intent_detected"])
 
         # Storing bot response after
         self.msg_repo.save_chatbot_message(conv_id=current_conv.id,
-                                           msg=bot_response.agent_response,
+                                           msg=bot_response["agent_response"],
                                            intent=None,
-                                           agent_type=bot_response.agent_type
+                                           agent_type=bot_response["agent_type"]
         )
             
-        return bot_response.agent_response
+        return bot_response["agent_response"]
 
     def end_conversation(self, user_id):
         """

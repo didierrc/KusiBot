@@ -62,11 +62,7 @@ class ChatbotManagerAgent:
             response["agent_response"] = agent_response["response"]
             response["agent_type"] = agent_response["type"]
             
-        return {
-            "intent_detected": response["intent_detected"],
-            "agent_response": response["agent_response"],
-            "agent_type": response["agent_type"]
-        }
+        return response
             
     def _handle_response_when_no_assesment(self, user_input, conversation_id):
         """
