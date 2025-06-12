@@ -38,17 +38,43 @@
                 <!-- Navbar links -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                        {% if current_user.is_authenticated %}
+
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('chatbot_bp.chatbot') }}">
-                                <i class="fa-solid fa-comments me-1"></i>Chat
+                            <a class="nav-link" href="{{ url_for('main_bp.index') }}">
+                                <i class="fa-solid fa-house me-1"></i>Home
                             </a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main_bp.about') }}">
                                 <i class="fa-solid fa-circle-info me-1"></i>About
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main_bp.sos') }}">
+                                <i class="fa-solid fa-truck-medical me-1"></i>SOS
+                            </a>
+                        </li>
+
+                        <!-- If user is NOT authenticated: See Register and Login
+                         If user IS authenticated: See Logout + Chat or Dashboard-->
+                        {% if current_user.is_authenticated %}
+
+                        {% if current_user.is_professional %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('professional_bp.dashboard') }}">
+                                <i class="fa-solid fa-table-columns me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('chatbot_bp.chatbot') }}">
+                                <i class="fa-solid fa-comments me-1"></i>Chat
+                            </a>
+                        </li>
+                        {% endif %}
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth_bp.logout') }}">
                                 <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
@@ -56,18 +82,8 @@
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main_bp.index') }}">
-                                <i class="fa-solid fa-house me-1"></i>Home
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main_bp.about') }}">
-                                <i class="fas fa-circle-info me-1"></i>About
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth_bp.signup') }}">
-                                <i class="fa-solid fa-user-plus me-1"></i>Sign Up
+                                <i class="fa-solid fa-user-plus me-1"></i>Register
                             </a>
                         </li>
                         <li class="nav-item">
