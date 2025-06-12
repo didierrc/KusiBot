@@ -118,6 +118,7 @@ class DashboardService:
                 response['assessments'].append({
                     'id': assessment.id,
                     'assessment_type': assessment.assessment_type,
+                    'message_trigger': assessment.message_trigger,
                     'start_time': assessment.start_time,
                     'end_time': assessment.end_time,
                     'total_score': assessment.total_score,

@@ -23,7 +23,7 @@ class WaitingCategorizationState(BaseState):
                     assessment_id=assessment_id,
                     question_number=assessment.current_question,
                     question_text=question_json['question'],
-                    user_response=user_input,
+                    user_response=assessment.last_free_text,
                     categorized_value=selected_index
                 )
                         

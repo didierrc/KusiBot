@@ -202,7 +202,8 @@ Your Response:
         if not current_assesment:
             questionnaire_to_take = self.map_intent_to_assessment(intent)
         
-            current_assesment = self.assess_repo.create_assessment(user_id=current_conv.user_id,
+            current_assesment = self.assess_repo.create_assessment(message_trigger=user_input,
+                                                                   user_id=current_conv.user_id,
                                                                    assessment_type=questionnaire_to_take,
                                                                    state=self.STATE_ASKING)
         

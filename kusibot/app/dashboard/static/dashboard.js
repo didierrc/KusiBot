@@ -97,7 +97,7 @@ async function getConversationHistory(userId) {
 }
 
 function getBadgeClassForInterpretation(interpretation) {
-    const interpretationLower = interpretation.toLowerCase()
+    const interpretationLower = interpretation ? interpretation.toLowerCase() : 'none'
 
     if (interpretationLower.includes('severe'))
         return 'bg-danger'
@@ -112,20 +112,20 @@ function getBadgeClassForInterpretation(interpretation) {
 }
 
 function createCollapseBodyAssessment(assessment) {
-    
+
     const assessmentBody = document.createElement('div');
     assessmentBody.classList.add('accordion-body');
 
     // Check if question data is available
     if (assessment.questions && assessment.questions.length > 0) {
-        
+
         // Create the table for questions and answers
         const table = document.createElement('table')
         table.className = 'table table-sm table-striped table-hover caption-top'
 
         // Add Caption
         const caption = table.createCaption()
-        caption.innerHTML = `<strong>Details for ${assessment.assessment_type}</strong> (Score: ${assessment.total_score})`
+        caption.innerHTML = `Bot triggered the assesment due to the following user message: "${assessment.message_trigger}"`
 
         // Create Table Header
         const thead = table.createTHead()
@@ -151,6 +151,12 @@ function createCollapseBodyAssessment(assessment) {
         // Append the table to the body
         assessmentBody.appendChild(table)
 
+        // Append total score to the body
+        const totalScore = document.createElement('p')
+        totalScore.className = 'mt-3'
+        totalScore.innerHTML = `<strong>Total Score:</strong> ${assessment.total_score ?? 'Not calculated'}`
+        assessmentBody.appendChild(totalScore)
+
     } else
         assessmentBody.textContent = 'Detailed question data not available for this assessment.';
 
@@ -159,6 +165,15 @@ function createCollapseBodyAssessment(assessment) {
 }
 
 async function getAssessmentsHistory(userId) {
+
+    assesment_date_options = {
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    }
 
     try {
         // Fetch assessment history
@@ -199,14 +214,14 @@ async function getAssessmentsHistory(userId) {
 
             // Populate the button with assessment details
             const assessmentStrong = document.createElement('strong')
-            assessmentStrong.textContent = assessment.assessment_type
+            const asssesmentDate = assessment.end_time ? new Date(assessment.end_time).toLocaleString(undefined, assesment_date_options) : 'Not Finished'
+            assessmentStrong.textContent = `${assessment.assessment_type} > ${asssesmentDate}`
             assessmentButton.appendChild(assessmentStrong)
-            assessmentButton.appendChild(document.createTextNode(` - Completed: ${new Date(assessment.end_time).toLocaleString()}`))
 
             const assessmentBadge = document.createElement('span')
             const badgeClass = getBadgeClassForInterpretation(assessment.interpretation)
-            assessmentBadge.className = `badge ${badgeClass} ms-auto`
-            assessmentBadge.textContent = `Interpretation: ${assessment.interpretation}`
+            assessmentBadge.className = `badge ${badgeClass} ms-auto p-2`
+            assessmentBadge.textContent = `${assessment.interpretation ? assessment.interpretation : 'No Interpretation'}`
             assessmentButton.appendChild(assessmentBadge)
 
             assessmentHeader.appendChild(assessmentButton)

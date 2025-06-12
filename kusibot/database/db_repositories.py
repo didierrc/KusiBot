@@ -304,7 +304,7 @@ class AssessmentRepository:
             db.session.rollback()
             return None
         
-    def create_assessment(self, user_id, assessment_type, state):
+    def create_assessment(self, message_trigger, user_id, assessment_type, state):
         """
         Create a new assessment for a given user.
 
@@ -320,6 +320,7 @@ class AssessmentRepository:
             new_assessment = Assessment(
                 user_id=user_id,
                 assessment_type=assessment_type,
+                message_trigger=message_trigger,
                 start_time=datetime.now(timezone.utc),
                 current_state=state
             )

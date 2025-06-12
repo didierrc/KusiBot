@@ -102,6 +102,7 @@ class Assessment(db.Model):
         id (int): Assessment ID.
         user_id (int): User ID that took the assessment.
         assessment_type (str): Type of assessment (e.g., 'PHQ-9').
+        message_trigger (str): Trigger message for the assessment.
         start_time (datetime): Start time of the assessment.
         end_time (datetime): End time of the assessment.
         total_score (int): Total score of the assessment.
@@ -112,6 +113,7 @@ class Assessment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assessment_type = db.Column(db.String(20), nullable=False)
+    message_trigger = db.Column(db.Text, nullable=False)
     start_time = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     end_time = db.Column(db.DateTime, nullable=True)
     total_score = db.Column(db.Integer, nullable=True)
