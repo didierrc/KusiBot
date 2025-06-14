@@ -11,13 +11,15 @@
   background-color: #f8f9fa;
 }
 
-/* Maximum height for the conversation history */
-.conversation-history{
-  max-height: 500px;
-}
-
 /* Style for Sidebar when Screen is small */  
 #sidebarUserListSmall{
   max-height: 30vh; 
   overflow-y: auto;
+}
+
+@media screen and (max-width: 767px) {
+  main{
+    padding-top: 2rem;
+  }
+  
 }

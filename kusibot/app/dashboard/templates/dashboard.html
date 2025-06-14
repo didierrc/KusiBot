@@ -8,23 +8,21 @@
 {% endblock %}
 
 {% block main %}
-<div class="container-fluid mt-3 vh-100">
-    <div class="row">
+<main class="container-fluid" id="main">
+    <div class="row h-100">
 
         <!-- Principal Sidebar: Shows list of users -->
-        <nav id="sidebarDashboard" class="col-md-4 col-lg-3 d-none d-md-block bg-light sidebar border-end">
+        <nav id="sidebarDashboard" class="col-md-4 col-lg-2 d-none d-md-block bg-light sidebar border-end">
             
             <div class="position-sticky pt-3 sidebar-sticky">     
                 
                 <!-- Sidebar Title -->
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-2 text-muted">
-                    USER SELECTION
-                    <br>
-                    (by username)
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center p-3 text-muted">
+                    USER SELECTION (by username)
                 </h6>
 
                 <!-- Sidebar Search Bar -->
-                <div class="px-3 mb-3">
+                <div class="px-3 pb-3 border-bottom">
                     <input type="search" class="form-control form-control-sm" placeholder="Search users..." id="sidebarSearchInput">
                 </div>
 
@@ -33,8 +31,8 @@
                     <!-- List -->
                     <ul class="nav flex-column">
                         {% for user in users %}
-                            <li class="nav-item">
-                                <a class="nav-link user-select-link" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}">
+                            <li class="nav-item py-2">
+                                <a class="nav-link user-select-link text-truncate" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}">
                                     <i class="fas fa-user fa-fw me-2"></i>{{ user.username }}
                                 </a>
                             </li>
@@ -43,12 +41,12 @@
                 </div>
 
                 <!-- Sidebar Footer -->
-                <p class="p-3 text-muted small">Click a user to view its details.</p>
+                <p class="p-3 text-muted small border-top">Click a user to view its details.</p>
             </div>
         </nav>
 
         <!-- Dashboard -->
-        <main class="col-md-8 ms-sm-auto col-lg-9 px-md-4">
+        <div class="col-md-8 ms-sm-auto col-lg-10 px-md-4">
         
             <!-- Flash Messages -->
             {% include "flash.html" %}
@@ -74,7 +72,7 @@
                     <ul class="nav flex-column">
                         {% for user in users %}
                             <li class="nav-item">
-                                <a class="nav-link user-select-link" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}" data-bs-toggle="collapse" data-bs-target="#sidebarDashboardSmall">
+                                <a class="nav-link user-select-link text-truncate" href="#" data-user-id="{{ user.id }}" data-user-name="{{ user.username }}" data-bs-toggle="collapse" data-bs-target="#sidebarDashboardSmall">
                                     <i class="fas fa-user fa-fw me-2"></i>{{ user.username }}
                                 </a>
                             </li>
@@ -123,26 +121,26 @@
                 </ul>
 
                 <!-- Tabs Content -->
-                <div class="tab-content" id="userDataTabsContent">
+                <div class="tab-content mb-4" id="userDataTabsContent">
                     
                     <!-- Conversations Tab -->
                     <div class="tab-pane fade show active" id="conversationsPanel" role="tabpanel" aria-labelledby="conversationsTab">
                         <h5 class="mb-3">Last Conversation History</h5>
                         <p class="loadingConversation text-muted text-center">Loading conversation...</p>
-                        <div class="conversation-history p-3 border rounded bg-light overflow-auto"></div>
+                        <div class="conversation-history p-3 border rounded bg-light overflow-auto" style="height: 55vh;"></div>
                     </div>
                     
                     <!-- Assesment Tab -->
                     <div class="tab-pane fade" id="assessmentsPanel" role="tabpanel" aria-labelledby="assessmentsTab">
                         <h5 class="mb-3">Assessment Results</h5>
                         <p class="loadingAssessments text-muted text-center">Loading assessments...</p>
-                        <div class="accordion" id="assessmentsAccordion"></div>
+                        <div class="accordion overflow-auto" style="height: 55vh;" id="assessmentsAccordion"></div>
                     </div>
                 </div>
             </div> 
-        </main>
+        </div>
     </div>
-</div>
+</main>
 {% endblock %}
 
 
