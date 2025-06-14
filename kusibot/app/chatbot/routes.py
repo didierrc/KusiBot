@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
-from kusibot.services import ChatbotService
+from kusibot.services import chatbot_service
 
 chatbot_bp = Blueprint('chatbot_bp', __name__, template_folder='templates', static_folder='static')
-chatbot_service = ChatbotService()
 
 @chatbot_bp.route('/', methods=['GET'])
 @login_required

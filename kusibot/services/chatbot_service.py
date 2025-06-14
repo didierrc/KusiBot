@@ -1,8 +1,6 @@
 from kusibot.database.db_repositories import ConversationRepository, MessageRepository, AssessmentRepository
 from kusibot.chatbot import ChatbotManagerAgent
 
-chatbot_manager = ChatbotManagerAgent()
-
 class ChatbotService:
     """Service class for handling chatbot interactions."""
     
@@ -18,7 +16,7 @@ class ChatbotService:
         self.conv_repo = ConversationRepository()
         self.msg_repo = MessageRepository()
         self.assessment_repo = AssessmentRepository()
-        self.chatbot_manager = chatbot_manager
+        self.user_agents = {}
 
     def create_or_get_conversation(self, user_id):
         """
@@ -47,6 +45,9 @@ class ChatbotService:
                     intent="Greeting"
                 )
 
+        # Create a new user agent for the user if it doesn't exist
+        self._get_or_create_chatbot_manager(user_id)
+
         # Either a new conversation was created or the current one was found, return the messages
         messages = self.msg_repo.get_limited_messages(conv_id=current_conv.id, 
                                                       limit=self.CHATBOT_MAX_RETRIEVE_MSG)
@@ -74,9 +75,12 @@ class ChatbotService:
         # If there is no current conversation, create a new one
         if not current_conv:
             return self.CHATBOT_NO_CONVERSATION
+        
+        # Get the correct chatbot manager for the user.
+        user_agent = self._get_or_create_chatbot_manager(user_id)
 
         # Response generation based on whether an assessment is active or not
-        bot_response = self.chatbot_manager.generate_bot_response(user_input, user_id, current_conv.id)
+        bot_response = user_agent.generate_bot_response(user_input, user_id, current_conv.id)
 
         # Saving user message first
         self.msg_repo.save_user_message(conv_id=current_conv.id,
@@ -92,15 +96,44 @@ class ChatbotService:
             
         return bot_response["agent_response"]
 
+    def _get_or_create_chatbot_manager(self, user_id):
+        """
+        Gets or creates a ChatbotManagerAgent for the user to handle chatbot interactions
+        keeping user-specific state and conversation management.
+        
+        Parameters
+            user_id: ID of the user to get or create the chatbot manager for.
+        Returns
+            ChatbotManagerAgent: The chatbot manager for the user.
+        """
+        
+        if user_id not in self.user_agents:
+            self.user_agents[user_id] = ChatbotManagerAgent()
+        return self.user_agents[user_id]
+
+    def _clear_user_agent(self, user_id):
+        """
+        Clears the chatbot manager for the user, effectively resetting their state.
+        
+        Parameters
+            user_id: ID of the user to clear the chatbot manager for.
+        """
+        
+        if user_id in self.user_agents:
+            del self.user_agents[user_id]
+
     def end_conversation(self, user_id):
         """
-        Ends the current conversation for the authenticated user.
+        Ends the current conversation and clear the user agent for the authenticated user.
         
         Parameters
             user_id: ID of the current user to end the conversation for.
         Returns
             bool: True if the conversation was successfully ended, False otherwise.
         """
+
+        # Clear the user agent to reset the state
+        self._clear_user_agent(user_id)
 
         # Get the current conversation for the user
         current_conv = self.conv_repo.get_current_conversation_by_user_id(user_id)
@@ -109,8 +142,7 @@ class ChatbotService:
         if current_conv:
             self.conv_repo.end_conversation(current_conv.id)
             return True
-        
+            
         return False
-
     
-
+chatbot_service = ChatbotService() # Singleton instance of ChatbotService

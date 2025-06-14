@@ -1,7 +1,29 @@
 import re, string, torch,json
 from transformers import BertTokenizer, BertForSequenceClassification
+from threading import Lock
 
-class IntentRecognizerAgent:
+# https://refactoring.guru/es/design-patterns/singleton/python/example#example-1
+class IntentRecognizerSingletonMeta(type):
+    """
+    Singleton metaclass for the IntentRecognizerAgent.
+    It is a thread-safe implementation of Singleton.
+    """
+
+    _instances = {}
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        
+        with cls._lock:
+            # If the instance does not exist, create it
+            # Otherwise, return the existing instance
+            if cls not in cls._instances:
+                instance = super().__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+        
+        return cls._instances[cls]
+
+class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
     """
     BERT-based intent classifier agent.
     This class is responsible for predicting the intent of the user's input.

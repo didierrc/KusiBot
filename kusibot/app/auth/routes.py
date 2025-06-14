@@ -4,12 +4,11 @@ from kusibot.app.auth.forms import RegisterForm, LoginForm
 from kusibot.app.auth.utils import redirect_to_principal_page
 from kusibot.services import (
     AuthService,
-    ChatbotService
+    chatbot_service
 )
 
 auth_bp = Blueprint('auth_bp', __name__, template_folder='templates', static_folder='static')
 auth_service = AuthService()
-chatbot_service = ChatbotService()
 
 MESSAGES = {
     'invalid_login': 'Invalid username or password.',
