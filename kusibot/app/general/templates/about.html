@@ -3,54 +3,54 @@
 {% block title %}About - KusiBot{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
+<div class="row py-5 justify-content-center aling-items-center">
+    <div class="col-lg-10">
 
-            <h1 class="mb-4 text-center border-bottom pb-3">About KusiBot</h1>
+        <h1 class="mb-4 text-center border-bottom pb-3">About KusiBot</h1>
 
-            <section class="mb-4">
-                <h2 class="h4 fw-light text-center mb-3">Your Friendly Mental Health Companion</h2>
-                <p class="lead text-center mb-4">
-                    KusiBot is an AI-powered chatbot designed to offer a supportive space for discussing mental well-being and provide initial mental health assessments.
-                </p>
+        <section class="mb-4">
+            <h2 class="h4 fw-light text-center mb-3">Your Friendly Mental Health Companion</h2>
+            <p class="lead text-center mb-4">
+                KusiBot is an AI-powered chatbot designed to offer a supportive space for discussing mental well-being and provide initial mental health assessments.
+            </p>
+            <p>
+                This project was developed as a <strong>Final Degree Project</strong> with the goal of exploring how AI, specifically Multi-Agent Systems (MAS), can be applied in the mental health domain. It aims to serve users seeking a company to talk to in those rough times as well as giving preliminary assessments.
+            </p>
+        </section>
+
+        <hr class="my-4">
+
+        <section class="mb-4 border-bottom pb-4">
+            <h2 class="h4">How KusiBot Works</h2>
+            <p>
+                KusiBot operates using a Multi-Agent System architecture:
+            </p>
+            <ul>
+                <li><strong>Manager Agent:</strong>Orchestrates your input messages routing it to the specific agent.</li>
+                <li><strong>Intent Recogniser Agent:</strong>Understands your input using BERT - an AI language model - to determine the intent behind your messages.</li>
+                <li><strong>Conversation Agent:</strong>Handles the general flow of conversation, making the interaction feel natural, powered by Mistral 7B (a Large Language Model - LLM).</li>
+                <li><strong>Assessment Agent:</strong>Administers standardised mental health questionnaires when a warning intent is detected, currently including the <strong>PHQ-9 (for Depression)</strong> and <strong>GAD-7 (for Anxiety)</strong>, guiding you through the questions to assess you so other professionals can check out your status.</li>
+            </ul>
+            <p>
+                This approach allows KusiBot to manage different aspects of the conversation effectively, from casual chat to structured assessment.
+            </p>
+        </section>
+
+        <section class="mb-4">
+            <h2 class="h4 text-danger mb-4"> <i class="fa-solid fa-triangle-exclamation me-2"></i>Important Disclaimer</h2>
+            
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">Not a Substitute for Professional Help</h4>
                 <p>
-                    This project was developed as a <strong>Final Degree Project</strong> with the goal of exploring how AI, specifically Multi-Agent Systems (MAS), can be applied in the mental health domain. It aims to serve users seeking a company to talk to in those rough times as well as giving preliminary assessments.
+                    KusiBot is an <strong>AI assistant and a student project</strong>. It is designed for informational and initial assessment purposes only. It <strong>cannot provide a diagnosis</strong> and is <strong>not a replacement for professional medical advice, psychological therapy, diagnosis, or treatment</strong> from a qualified healthcare provider.
                 </p>
-            </section>
-
-            <hr class="my-4">
-
-            <section class="mb-4">
-                <h2 class="h4">How KusiBot Works</h2>
-                <p>
-                    KusiBot operates using a Multi-Agent System architecture:
+                <hr>
+                <p class="mb-0">
+                    <strong>If you are experiencing a mental health crisis, please do not rely on KusiBot.</strong> Contact your local emergency services or a crisis hotline immediately.
                 </p>
-                <ul>
-                    <li><strong>Manager Agent:</strong>Orchestrates your input messages routing it to the specific agent.</li>
-                    <li><strong>Intent Recogniser Agent:</strong>Understands your input using BERT - an AI language model - to determine the intent behind your messages.</li>
-                    <li><strong>Conversation Agent:</strong>Handles the general flow of conversation, making the interaction feel natural, powered by Mistral 7B (a Large Language Model - LLM).</li>
-                    <li><strong>Assessment Agent:</strong>Administers standardised mental health questionnaires when a warning intent is detected, currently including the <strong>PHQ-9 (for Depression)</strong> and <strong>GAD-7 (for Anxiety)</strong>, guiding you through the questions to assess you so other professionals can check out your status.</li>
-                </ul>
-                <p>
-                    This approach allows KusiBot to manage different aspects of the conversation effectively, from casual chat to structured assessment.
-                </p>
-            </section>
-
-            <section class="mb-4">
-                <h2 class="h4 text-danger"> <i class="fa-solid fa-triangle-exclamation me-2"></i>Important Disclaimer</h2>
-                 <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-heading">Not a Substitute for Professional Help</h4>
-                    <p>
-                        KusiBot is an <strong>AI assistant and a student project</strong>. It is designed for informational and initial assessment purposes only. It <strong>cannot provide a diagnosis</strong> and is <strong>not a replacement for professional medical advice, psychological therapy, diagnosis, or treatment</strong> from a qualified healthcare provider.
-                    </p>
-                    <hr>
-                    <p class="mb-0">
-                        <strong>If you are experiencing a mental health crisis, please do not rely on KusiBot.</strong> Contact your local emergency services or a crisis hotline immediately.
-                    </p>
-                </div>
-            </section>
-        </div>
+            </div>
+        </section>
+    
     </div>
 </div>
 {% endblock %}

@@ -3,14 +3,14 @@
 {% block title %}Not Found - KusiBot{% endblock %}
 
 {% block content %}
-<div class="text-center mt-4 mb-5">
+<div class="container text-center my-5">
     
     <img src="{{ url_for('static', filename='not_found_kusibot.png') }}" alt="404 Kusibot Logo" class="img-fluid mb-5" style="max-width: 250px; height: auto;"> 
 
     <h1>Ooops! This page seems to be lost in thought.</h1>
     <p>That's okay Sometimes we all need a moment to find our way. Let's get you back to a supportive space.</p>
     
-    <a href="{{ url_for('main_bp.index') }}" class="btn btn-primary mt-5">Return Home</a>
+    <a href="{{ url_for('main_bp.index') }}" class="btn btn-primary mt-4">Return Home</a>
     
     <p class="mt-4">Or check out our <a href="{{ url_for('main_bp.about') }}">About</a> page to learn more about KusiBot.</p>
 </div>
