@@ -22,6 +22,23 @@ class UserRepository:
             db.session.rollback()
             return None
         
+    def get_user_by_email(self, email):
+        """
+        Retrieve a user by their email.
+
+        Parameters:
+            email (str): The email of the user to retrieve.
+        Returns:
+            User: The user object if found, otherwise None.
+        """
+
+        try:
+            return db.session.query(User).filter_by(email=email).first()
+        except Exception as e:
+            print(f"Error retrieving user by email: {e}")
+            db.session.rollback()
+            return None
+        
     def add_user(self, username, email, hashed_password, is_professional):
         """
         Add a new user to the database.

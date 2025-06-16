@@ -1,4 +1,5 @@
 from kusibot.database.db_repositories import UserRepository
+import re
 
 class AuthService:
     """
@@ -12,24 +13,27 @@ class AuthService:
 
         self.user_repository = UserRepository()
 
-    def possible_login(self, username, password):
+    def possible_login(self, identifier, password):
         """
-        Logs in a user with the given username and password.
+        Logs in a user with the given identifier and password.
 
         Parameters:
-            username (str): The username of the user.
+            identifier (str): The username or email of the user.
             password (str): The password of the user.
         Returns:
             User: The authenticated user object if login is successful, otherwise None.
         """
 
-        # Check if user exists and password is correct.
-        user = self.user_repository.get_user_by_username(username)
-        
+        # Check first whether the identifier is an email or username.
+        if re.match(r'[^@]+@[^@]+\.[^@]+', identifier):
+            user = self.user_repository.get_user_by_email(identifier)
+        else:
+            user = self.user_repository.get_user_by_username(identifier)
+
+        # Check if user exists and password is correct.        
         if user and user.check_password(password):
             return user
-        else:
-            return None
+        return None
 
     def register(self, username, email, password, is_professional=False):
         """

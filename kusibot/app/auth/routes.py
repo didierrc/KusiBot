@@ -34,7 +34,7 @@ def login():
     # If form is submitted, validate the form data.
     if form.validate_on_submit():
 
-        user = auth_service.possible_login(form.username.data, 
+        user = auth_service.possible_login(form.identifier.data, 
                                            form.password.data)
 
         if user:
