@@ -141,6 +141,10 @@ class ChatbotService:
         # If there is a current conversation, end it
         if current_conv:
             self.conv_repo.end_conversation(current_conv.id)
+            # If there was an active assessment, end it as well
+            if self.assessment_repo.is_assessment_active(user_id):
+                self.assessment_repo.end_assessment(user_id)
+
             return True
             
         return False

@@ -407,6 +407,23 @@ class AssessmentRepository:
             print(f"Error retrieving assessments: {e}")
             db.session.rollback()
             return []
+        
+    def end_assessment(self, user_id):
+        """
+        End the current assessment for a given user by setting its end_time.
+
+        Parameters:
+            user_id: The ID of the user whose assessment is to be ended.
+        """
+
+        try:
+            assessment = self.get_current_assessment(user_id)
+            if assessment:
+                assessment.end_time = datetime.now(timezone.utc)
+                db.session.commit()
+        except Exception as e:
+            print(f"Error ending assessment: {e}")
+            db.session.rollback()
 
 class AssessmentQuestionRepository:
     

@@ -1,6 +1,6 @@
 [project]
 name = "kusibot"
-version = "0.1.0"
+version = "1.0.0"
 description = "Chatbot for mental health self-assessments, combining AI-driven conversations with psychological screening."
 authors = [
     {name = "Didier Reyes Castro",email = "didieryamil02@gmail.com"}
