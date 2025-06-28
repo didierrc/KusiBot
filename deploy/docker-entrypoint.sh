@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-# Run database migrations
-poetry run flask db upgrade
+echo "Setting up instance folder..."
+mkdir -p /app/instance
+chmod -R 777 /app/instance
 
-sleep 5m
-
-# Start the application
-exec gunicorn --bind 0.0.0.0:8000 "app:create_app('prod')"
+echo "Starting Gunicorn server..."
+exec gunicorn --bind 0.0.0.0:5000 "app:create_app('prod')"

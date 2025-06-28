@@ -1,6 +1,7 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from kusibot.database.db_repositories import MessageRepository
+import os
 
 class ConversationAgent:
   """
@@ -46,8 +47,10 @@ Your Response:
     Initialises the ConversationAgent with the specified model.
     """
     
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
     try:
-      self.model = OllamaLLM(model=model_name)
+      self.model = OllamaLLM(model=model_name, base_url=ollama_base_url)
     except Exception as e:
       print(f"ERROR: Ollama is not installed - {e}")
       self.model = None

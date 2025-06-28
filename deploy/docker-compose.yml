@@ -1,17 +1,50 @@
 services:
-  kusibot:
+  # Setting kusibot-app service in port 5000.
+  kusibot-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: deploy/Dockerfile
     ports:
-      - "8000:8000"
+      - "5000:5000"
     volumes:
-      - ./.env:/app/.env
-      - ./instance:/app/instance
+      - kusibot_data:/app/instance # Persisting the database in a Docker volume
+    env_file:
+      - ../.env # Load environment variables from local .env file
+    depends_on:
+      - ollama
     restart: unless-stopped
     networks:
-      - kusibot-network
+      - kusibot-net
+
+  # Setting ollama service in port 11434 with NVIDIA drivers.
+  # https://gist.github.com/usrbinkat/de44facc683f954bf0cca6c87e2f9f88
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama # Persisting ollama data (and model) in a Docker volume
+    restart: unless-stopped
+    networks:
+      - kusibot-net
+
+volumes:
+  kusibot_data:
+  ollama_data:
 
 networks:
-  kusibot-network:
+  kusibot-net:
     driver: bridge

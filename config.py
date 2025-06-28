@@ -6,8 +6,8 @@ import os, pathlib
 #####################################################################
 
 # Get the base directory of the current project.
-BASE_DIR = pathlib.Path(__file__).resolve()
-DEFAULT_SQL = f'sqlite:///{BASE_DIR}/instance/kusibot.db'
+BASE_DIR = pathlib.Path(__file__).parent.resolve()
+DEFAULT_SQL = f'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'kusibot.db')
 
 class Config:
     """Base configuration class for the Flask app."""

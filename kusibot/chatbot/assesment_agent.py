@@ -61,8 +61,9 @@ Your Response:
     def __init__(self, model_name="mistral"):
         
         # Load Mistral Ollama model
+        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         try:
-            self.model = OllamaLLM(model=model_name)
+            self.model = OllamaLLM(model=model_name, base_url=ollama_base_url)
         except Exception as e:
           print(f"ERROR: Ollama is not installed - {e}")
           self.model = None

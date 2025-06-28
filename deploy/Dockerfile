@@ -1,45 +1,48 @@
-# Using specific version of Python from Poetry toml.
-FROM python:3.12
+# --- Builder Stage [This stage installs dependencies into a venv] ---
+FROM python:3.12-bookworm AS builder
+
+# Set environment variables for Poetry initialisation
+# https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
+# Installing poetry
+RUN pip install poetry
+  
+# Seting working directory
+WORKDIR /app
+
+# Copying the needed files to install dependencies
+COPY poetry.lock pyproject.toml ./
+
+# Install dependencies in the virtual environment
+RUN poetry install --no-root --only main && rm -rf $POETRY_CACHE_DIR
+
+# --- Final Stage [This stage copies the venv and application code] ---
+FROM python:3.12-slim-bookworm AS runtime
+
+# Same env files
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    FLASK_APP=app.py
 
 # Seting working directory
 WORKDIR /app
 
-# Installing curl, bash and Poetry
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends bash curl && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copying the before created venv
+COPY --from=builder /app/.venv ./.venv
 
-# Ensuring Poetry's bin directory is in PATH
-ENV PATH="/root/.local/bin:${PATH}"
+# Copying source code
+COPY app.py config.py ./
+COPY kusibot/ ./kusibot/
+COPY deploy/docker-entrypoint.sh ./
 
-# Configure poetry to not create a virtual environment
-RUN poetry config virtualenvs.create false
+# Making entrypoint script executable
+RUN chmod +x ./docker-entrypoint.sh
 
-# Copying the root files
-COPY poetry.lock pyproject.toml README.md app.py ./
-
-# Copying application code
-COPY kusibot ./kusibot/
-COPY tests ./tests/
-
-# Create the instance directory for the database
-RUN mkdir -p /app/instance
-
-# Install dependencies
-RUN poetry install --only main
-
-# Expose port
-EXPOSE 8000
-
-# Health check: Telling Docker how to test the container to check that it's still working.
-HEALTHCHECK --interval=1m --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/ || exit 1
-
-# Copying the entrypoint script
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Run the entrypoint (db migrations and start the app)
-ENTRYPOINT [ "/entrypoint.sh" ]
+# Run the entrypoint
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
