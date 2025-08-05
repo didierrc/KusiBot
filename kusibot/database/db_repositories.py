@@ -4,12 +4,13 @@ from sqlalchemy import func
 from datetime import datetime, timezone
 
 class UserRepository:
+    """Manages all data access logic for the User model."""
 
     def get_user_by_username(self, username):
         """
         Retrieve a user by their username.
 
-        Parameters:
+        Args:
             username (str): The username of the user to retrieve.
         Returns:
             User: The user object if found, otherwise None.
@@ -26,7 +27,7 @@ class UserRepository:
         """
         Retrieve a user by their email.
 
-        Parameters:
+        Args:
             email (str): The email of the user to retrieve.
         Returns:
             User: The user object if found, otherwise None.
@@ -43,7 +44,7 @@ class UserRepository:
         """
         Add a new user to the database.
 
-        Parameters:
+        Args:
             username (str): The username of the new user.
             email (str): The email of the new user.
             hashed_password (str): The hashed password of the new user.
@@ -83,12 +84,13 @@ class UserRepository:
             return []
 
 class ConversationRepository:
+    """Manages all data access logic for the Conversation model."""
 
     def get_current_conversation_by_user_id(self, user_id):
         """
         Retrieve the current conversation (not finished) for a given user.
 
-        Parameters:
+        Args:
             user_id: The ID of the user whose current conversation is to be retrieved.
         Returns:
             Conversation: The current conversation object if found, otherwise None.
@@ -107,7 +109,7 @@ class ConversationRepository:
         """
         Retrieve the last conversation (finished or not) for a given user.
         
-        Parameters:
+        Args:
             user_id: The ID of the user whose last conversation is to be retrieved.
         Returns:
             Conversation: The last conversation object if found, otherwise None.
@@ -127,7 +129,7 @@ class ConversationRepository:
         """
         Create a new conversation for a given user.
 
-        Parameters:
+        Args:
             user_id: The ID of the user for whom the conversation is to be created.
         Returns:
             Conversation: The newly created conversation object if successful, otherwise None.
@@ -148,7 +150,7 @@ class ConversationRepository:
         """
         Retrieve a conversation by its ID.
         
-        Parameters:
+        Args:
             conv_id: The ID of the conversation to retrieve.
         Returns:
             Conversation: The conversation object if found, otherwise None.
@@ -165,7 +167,7 @@ class ConversationRepository:
         """
         End the given conversation by setting its finished_at timestamp.
 
-        Parameters:
+        Args:
             conv_id: The ID of the conversation to end.
         """
 
@@ -179,12 +181,13 @@ class ConversationRepository:
             db.session.rollback()
 
 class MessageRepository:
+    """Manages all data access logic for the Message model."""
 
     def save_chatbot_message(self, conv_id, msg, intent=None, agent_type="Conversation"):
         """
         Save a chatbot message to the conversation stored in database.
 
-        Parameters:
+        Args:
             conv_id: The ID of the conversation to which the message belongs.
             msg: The text of the chatbot message.
             intent: The intent of the message, if applicable (generally, it does not).
@@ -210,7 +213,7 @@ class MessageRepository:
         """
         Save a user message to the conversation stored in database.
         
-        Parameters:
+        Args:
             conv_id: The ID of the conversation to which the message belongs.
             msg: The text of the user message.
             intent: The intent of the message, if applicable.
@@ -234,7 +237,7 @@ class MessageRepository:
         """
         Retrieve the last <limit> messages from a conversation, ordered by timestamp.
 
-        Parameters:
+        Args:
             conv_id: The ID of the conversation from which to retrieve messages.
             limit: The maximum number of messages to retrieve.
         Returns:
@@ -256,7 +259,7 @@ class MessageRepository:
         """
         Retrieve all messages from a conversation, ordered by timestamp.
 
-        Parameters:
+        Args:
             conv_id: The ID of the conversation from which to retrieve messages.
         Returns:
             list: A list of Message objects.
@@ -273,12 +276,13 @@ class MessageRepository:
             return []
     
 class AssessmentRepository:
+    """Manages all data access logic for the Assessment model."""
 
     def get_current_assessment(self, user_id):
         """
         Retrieve the current assessment (not finished) for a given user.
 
-        Parameters:
+        Args:
             user_id: The ID of the user whose current assessment is to be retrieved.
         Returns:
             Assessment: The current assessment object if found, otherwise None.
@@ -297,7 +301,7 @@ class AssessmentRepository:
         """
         Check if there is an active assessment for the given user.
 
-        Parameters:
+        Args:
             user_id: The ID of the user to check.
         Returns:
             bool: True if an active assessment exists, False otherwise.
@@ -308,7 +312,7 @@ class AssessmentRepository:
         """
         Retrieve an assessment by its ID.
 
-        Parameters:
+        Args:
             assessment_id: The ID of the assessment to retrieve.
         Returns:
             Assessment: The assessment object if found, otherwise None.
@@ -325,7 +329,7 @@ class AssessmentRepository:
         """
         Create a new assessment for a given user.
 
-        Parameters:
+        Args:
             user_id: The ID of the user for whom the assessment is to be created.
             assessment_type: The type of the assessment (e.g., "PHQ9", "GAD7").
             state: The initial state of the assessment (e.g., "AskingQuestion state").
@@ -353,7 +357,7 @@ class AssessmentRepository:
         """
         Update an existing assessment with new values.
 
-        Parameters:
+        Args:
             assessment_id: The ID of the assessment to update.
             **kwargs: The fields to update and their new values.
         """
@@ -372,7 +376,7 @@ class AssessmentRepository:
         """
         Calculate the total score of an assessment by summing the values of its questions.
 
-        Parameters:
+        Args:
             assessment_id: The ID of the assessment for which to calculate the total score.
         Returns:
             int: The total score of the assessment, or 0 if no questions are found or an error occurred.
@@ -392,7 +396,7 @@ class AssessmentRepository:
         """
         Retrieve all assessments for a given user, ordered by start time in descending order.
 
-        Parameters:
+        Args:
             user_id: The ID of the user whose assessments are to be retrieved.
         Returns:
             list: A list of Assessment objects.
@@ -412,7 +416,7 @@ class AssessmentRepository:
         """
         End the current assessment for a given user by setting its end_time.
 
-        Parameters:
+        Args:
             user_id: The ID of the user whose assessment is to be ended.
         """
 
@@ -426,12 +430,13 @@ class AssessmentRepository:
             db.session.rollback()
 
 class AssessmentQuestionRepository:
+    """Manages all data access logic for the AssessmentQuestion model."""
     
     def get_question_by_assessment_id(self, assessment_id):
         """
         Retrieve all questions for a given assessment, ordered by question number.
 
-        Parameters:
+        Args:
             assessment_id: The ID of the assessment whose questions are to be retrieved.
         Returns:
             list: A list of AssessmentQuestion objects.
@@ -451,7 +456,7 @@ class AssessmentQuestionRepository:
         """
         Save an assessment question to the database.
 
-        Parameters:
+        Args:
             assessment_id: The ID of the assessment to which the question belongs.
             question_number: The number of the question in the assessment.
             question_text: The text of the question.

@@ -32,13 +32,14 @@ class User(UserMixin, db.Model):
     assessments = db.relationship('Assessment', backref='user', lazy=True)
 
     def __repr__(self):
+        """Represents in a string the essential attributes of an User object."""
         return f'<User {self.username!r}. Email: {self.email!r}. Professional: {self.is_professional!r}>'
     
     def check_password(self, password):
         """
         Check if the provided password matches the user's password.
 
-        Parameters:
+        Args:
             password (str): The password to check.
         
         Returns:
@@ -67,6 +68,7 @@ class Conversation(db.Model):
     messages = db.relationship('Message', backref='conversation', lazy=True)
 
     def __repr__(self):
+        """Represents in a string the essential attributes of a Conversation object."""
         return f'<Conversation {self.id!r}. User: {self.user_id!r}. Created at: {self.created_at!r}>'
 
 class Message(db.Model):
@@ -92,6 +94,7 @@ class Message(db.Model):
     agent_type = db.Column(db.String(20), nullable=True)
 
     def __repr__(self):
+        """Represents in a string the essential attributes of a Message object."""
         return f'<Message {self.id!r}. Conversation: {self.conversation_id!r}. Timestamp: {self.timestamp!r}. Is user: {self.is_user!r}. Intent: {self.intent!r}. Agent type: {self.agent_type!r}>'
 
 class Assessment(db.Model):
@@ -127,6 +130,7 @@ class Assessment(db.Model):
     questions = db.relationship('AssessmentQuestion', backref='assessment', lazy=True)
 
     def __repr__(self):
+        """Represents in a string the essential attributes of an Assessment object."""
         return f'<Assessment {self.id!r}. User: {self.user_id!r}. Type: {self.assessment_type!r}. Total score: {self.total_score!r}. Interpretation: {self.interpretation!r}>'
 
 class AssessmentQuestion(db.Model):
@@ -152,4 +156,5 @@ class AssessmentQuestion(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def __repr__(self):
+        """Represents in a string the essential attributes of an AssessmentQuestion object."""
         return f'<AssessmentQuestion {self.id!r}. Assessment: {self.assessment_id!r}. Question number: {self.question_number!r}. User response: {self.user_response!r}. Categorized value: {self.categorized_value!r}>'

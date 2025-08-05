@@ -9,6 +9,25 @@ class AssesmentAgent:
     LLM-based assesment agent.
     Handles assesment conversation flow when distress intent is detected by BERT.
     It follows a state machine pattern to manage the conversation flow.
+
+    Args:
+        model_name (str, optional): The name of the Ollama model to be used. 
+            Defaults to "mistral".
+
+    Attributes:
+        model (OllamaLLM | None): An instance of the Ollama language model client. 
+            Is None if the connection fails.
+        prompt_question (ChatPromptTemplate): A LangChain prompt template for 
+            generating natural-sounding assessment questions.
+        questionnaires (dict): A dictionary containing the loaded structures for 
+            all available assessments (e.g., PHQ-9, GAD-7).
+        state (BaseState): The current state object in the state machine, which 
+            determines the agent's behavior.
+        conv_repo (ConversationRepository): Repository for conversation data access.
+        assess_repo (AssessmentRepository): Repository for assessment data access.
+        msg_repo (MessageRepository): Repository for message data access.
+        assess_question_repo (AssessmentQuestionRepository): Repository for 
+            assessment question data access.
     """
 
     STATE_ASKING = "asking_question"
@@ -108,7 +127,7 @@ Your Response:
         """
         Transition to the given state in the assessment state machine.
 
-        Parameters:
+        Args:
             state (AssessmentState): The new state to transition to.
         """
 
@@ -121,7 +140,7 @@ Your Response:
         """
         Get the question JSON to ask based on the assesment current state.
         
-        Parameters:
+        Args:
             assessment_id: The ID of the current assessment.
         Returns:
             dict: The question JSON to ask, or None if not found.
@@ -145,7 +164,7 @@ Your Response:
         """
         Generate a naturalized question based on the provided question and context (to have a more fluid conversation).
         
-        Parameters:
+        Args:
             question: The question to naturalize.
             question_id: The ID of the question.
             user_id: The ID of the user asking the question.
@@ -172,7 +191,7 @@ Your Response:
         """
         Map the intent to the corresponding questionnaire (PHQ9 or GAD7).
         
-        Parameters:
+        Args:
             intent: The intent string to map.
         Returns:
             str: The key of the questionnaire that matches the intent, or None if not found.    
@@ -187,7 +206,7 @@ Your Response:
         """
         Generate a response based on the user input and the current state of the assessment.
         
-        Parameters:
+        Args:
             user_input: The input from the user.
             conversation_id: The ID of the current conversation.
             intent: The intent detected by BERT, if any.

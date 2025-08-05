@@ -5,9 +5,20 @@ import os
 
 class ConversationAgent:
   """
-  LLM-based conversation agent.
-  This class is responsible for engaging in conversations given the user's input.
-  """
+    LLM-based conversation agent.
+    This class is responsible for engaging in conversations given the user's input.
+
+    Args:
+      model_name (str, optional): The name of the Ollama model to be used.
+            Defaults to "mistral".
+
+    Attributes:
+        model (OllamaLLM | None): An instance of the Ollama language model client.
+            Is None if the connection fails.
+        prompt (ChatPromptTemplate): A LangChain prompt template for generating
+            empathetic conversational responses.
+        msg_repo (MessageRepository): Repository for message data access.
+    """
 
   CONTEXT_MAX_RETRIEVE_MSG = 10
   MODEL_NOT_AVAILABLE_RESPONSE = "Sorry, the model is not available at the moment and I'm not able to help you :("
@@ -43,9 +54,6 @@ Your Response:
 """
 
   def __init__(self, model_name="mistral"):
-    """
-    Initialises the ConversationAgent with the specified model.
-    """
     
     ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
@@ -64,7 +72,7 @@ Your Response:
     """
     Generates a response based on the user's input and the conversation context.
     
-    Parameters:
+    Args:
       text (str): The user's input text.
       conversation_id (int): The ID of the current conversation.
       intent (str, optional): The detected intent of the user's input. Not used in this agent.

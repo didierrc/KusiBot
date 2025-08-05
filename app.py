@@ -34,8 +34,8 @@ def create_app(config_name):
   Creates and Configures a Flask app instance
   following the Application-factory pattern.
   
-  Parameters:
-    config_name: The configuration name to use [dev/testing/prod].
+  Args:
+    config_name (str): The configuration name to use [dev/testing/prod].
   
   Returns:
     Flask: The Flask app instance.

@@ -4,20 +4,19 @@ import re
 class AuthService:
     """
     Service class for handling user authentication and registration.
+
+    Attributes:
+        user_repository (UserRepository): Repository for user data access.
     """
 
     def __init__(self):
-        """
-        Initialises the AuthService class with their needed repositories.
-        """
-
         self.user_repository = UserRepository()
 
     def possible_login(self, identifier, password):
         """
         Logs in a user with the given identifier and password.
 
-        Parameters:
+        Args:
             identifier (str): The username or email of the user.
             password (str): The password of the user.
         Returns:
@@ -39,7 +38,7 @@ class AuthService:
         """
         Registers a new user in KusiBot.
         
-        Parameters:
+        Args:
             username (str): The username of the new user.
             email (str): The email of the new user.
             password (str): The password of the new user.

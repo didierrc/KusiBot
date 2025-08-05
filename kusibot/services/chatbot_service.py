@@ -2,7 +2,15 @@ from kusibot.database.db_repositories import ConversationRepository, MessageRepo
 from kusibot.chatbot import ChatbotManagerAgent
 
 class ChatbotService:
-    """Service class for handling chatbot interactions."""
+    """Service class for handling chatbot interactions.
+
+    Attributes:
+        conv_repo (ConversationRepository): Repository for conversation data access.
+        msg_repo (MessageRepository): Repository for message data access.
+        assessment_repo (AssessmentRepository): Repository for assessment data access.
+        user_agents (dict): A dictionary to store and manage a unique Manager Agent
+            instance for each active user session, mapping user_id to agent instance.
+    """
     
     CHATBOT_MAX_RETRIEVE_MSG = 10
     CHATBOT_START_CONV_MSG = "Hello! I'm Kusibot and I'm here to chat with you about how you're feeling today."
@@ -10,9 +18,6 @@ class ChatbotService:
     CHATBOT_NO_CONVERSATION = 'No current conversation found. Please start a new conversation.'
 
     def __init__(self):
-        """
-        Initialises the ChatbotService class with their needed repositories.
-        """
         self.conv_repo = ConversationRepository()
         self.msg_repo = MessageRepository()
         self.assessment_repo = AssessmentRepository()
@@ -22,9 +27,9 @@ class ChatbotService:
         """
         Creates a new conversation for the authenticated user or gets the current conversation.
         
-        Parameters
+        Args:
             user_id: ID of the current user to retrieve or create the conversation from.
-        Returns
+        Returns:
             messages: Array of JSON messages for the new/current conversation.
         """
         
@@ -62,10 +67,10 @@ class ChatbotService:
         """
         Generates a response from the chatbot.
         
-        Parameters
+        Args:
             user_input: The message sent by the user.
             user_id: ID of the user making the request.
-        Returns
+        Returns:
             response: The chatbot's response to the user's input.
         """
 
@@ -101,9 +106,9 @@ class ChatbotService:
         Gets or creates a ChatbotManagerAgent for the user to handle chatbot interactions
         keeping user-specific state and conversation management.
         
-        Parameters
+        Args:
             user_id: ID of the user to get or create the chatbot manager for.
-        Returns
+        Returns:
             ChatbotManagerAgent: The chatbot manager for the user.
         """
         
@@ -115,7 +120,7 @@ class ChatbotService:
         """
         Clears the chatbot manager for the user, effectively resetting their state.
         
-        Parameters
+        Args:
             user_id: ID of the user to clear the chatbot manager for.
         """
         
@@ -126,9 +131,9 @@ class ChatbotService:
         """
         Ends the current conversation and clear the user agent for the authenticated user.
         
-        Parameters
+        Args:
             user_id: ID of the current user to end the conversation for.
-        Returns
+        Returns:
             bool: True if the conversation was successfully ended, False otherwise.
         """
 

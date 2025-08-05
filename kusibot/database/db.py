@@ -16,7 +16,7 @@ def init_db(app):
     """
     Initialising DB (SQLAlchemy) with Flask app.
     
-    Parameters:
+    Args:
         app: The Flask app instance.
     """
 
@@ -34,7 +34,7 @@ def initialise_data(app,db):
     Initialises the database creating all its tables and the UNIQUE professional user who has access
     to the non-professional users conversations and insights.
 
-    Parameters:
+    Args:
         app: The Flask app instance.
         db: The SQLAlchemy instance.
     """

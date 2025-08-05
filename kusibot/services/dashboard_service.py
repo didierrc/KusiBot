@@ -7,13 +7,18 @@ from kusibot.database.db_repositories import(
 )
 
 class DashboardService:
-    """Service class for handling dashboards interactions."""
+    """Service class for handling dashboards interactions.
+
+    Attributes:
+        user_repo (UserRepository): Repository for user data access.
+        conv_repo (ConversationRepository): Repository for conversation data access.
+        msg_repo (MessageRepository): Repository for message data access.
+        assessment_repo (AssessmentRepository): Repository for assessment data access.
+        assesment_question_repo (AssessmentQuestionRepository): Repository for
+            assessment question data access.
+    """
 
     def __init__(self):
-        """
-        Initialises the DashboardService class with their needed repositories.
-        """
-
         self.user_repo = UserRepository()
         self.conv_repo = ConversationRepository()
         self.msg_repo = MessageRepository()
@@ -43,7 +48,7 @@ class DashboardService:
         """
         Retrieves the last conversation and its messages for a given user.
         
-        Parameters:
+        Args:
             user_id: The ID of the user for whom to retrieve the conversation.
         Returns:
             dict: A dictionary containing the conversation details and messages.
@@ -86,7 +91,7 @@ class DashboardService:
         """
         Retrieves assessments and their questions for a given user.
         
-        Parameters:
+        Args:
             user_id: The ID of the user for whom to retrieve assessments.
         Returns:
             dict: A dictionary containing the assessments and their questions.

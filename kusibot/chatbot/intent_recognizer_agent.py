@@ -27,6 +27,18 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
     """
     BERT-based intent classifier agent.
     This class is responsible for predicting the intent of the user's input.
+
+    Attributes:
+        device (torch.device): The computing device (CPU or CUDA GPU) on which
+            the model is running.
+        tokenizer (BertTokenizer): The tokenizer for preprocessing text to match
+            the BERT model's input format.
+        model (BertForSequenceClassification): The fine-tuned BERT model loaded
+            from the Hugging Face Hub.
+        label_mapping (dict): A dictionary mapping intent labels to their
+            corresponding numerical class indices.
+        reverse_label_mapping (dict): A dictionary mapping numerical class
+            indices back to their intent labels.
     """
 
     BERT_TOKENIZER = "bert-base-uncased"
@@ -34,7 +46,6 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
     TEXT_MAX_LENGTH = 128
 
     def __init__(self):
-        """Initializes the BERT intent classifier model and label mapping."""
 
         # Whether to use GPU or CPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -66,7 +77,7 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
         Cleans the input text by removing unwanted characters, links, HTML tags, punctuation, and extra whitespace.
         Also converts the text to lowercase and removes words containing numbers.
         
-        Parameters:
+        Args:
             text: The input text to be cleaned.
         Returns:
             str: The cleaned text.
@@ -89,7 +100,7 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
         """
         Converts the input text into tensors suitable for the BERT model.
         
-        Parameters:
+        Args:
             text: The input text to be tokenized.
         Returns:
             tuple: A tuple containing the input IDs and attention mask tensors.
@@ -116,7 +127,7 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
         """
         Predicts the intent of the input text using the BERT model.
         
-        Parameters:
+        Args:
             text: The input text for which the intent needs to be predicted.
             return_confidence: If True, returns the confidence of the prediction.
             

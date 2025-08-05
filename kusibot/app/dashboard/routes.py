@@ -10,14 +10,22 @@ dashboard_service = DashboardService()
 @professional_bp.route('/')
 @login_required
 def dashboard():
-    """Render the dashboard page (protected) with the list of users using KusiBot."""
+    """Render the dashboard page (protected) with the list of users using KusiBot.
+    
+    Returns:
+        str: The HTML dashboard page to render.
+    """
     users = dashboard_service.get_chat_users()
     return render_template('dashboard.html', users=users)
 
 @professional_bp.route('/conversations')
 @login_required
 def dashboard_conversations():
-    """Get the conversation for a selected user (URL parameter)."""
+    """Get the conversation for a selected user (URL parameter).
+    
+    Returns:
+        Response: The JSON conversations for the given user.
+    """
 
     user_id = request.args.get('user_id', type=int)
     if user_id is None:
@@ -29,7 +37,11 @@ def dashboard_conversations():
 @professional_bp.route('/assessments')
 @login_required
 def dashboard_assessments():
-    """Get the assessments for a selected user (URL parameter)."""
+    """Get the assessments for a selected user (URL parameter).
+    
+    Returns:
+        Response: The JSON assessments for the given user.
+    """
     
     user_id = request.args.get('user_id', type=int)
     if user_id is None:

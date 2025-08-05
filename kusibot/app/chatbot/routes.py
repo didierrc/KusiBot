@@ -7,7 +7,11 @@ chatbot_bp = Blueprint('chatbot_bp', __name__, template_folder='templates', stat
 @chatbot_bp.route('/', methods=['GET'])
 @login_required
 def chatbot():
-    """Render the chatbot interface. Requires user to be logged in."""
+    """Render the chatbot interface. Requires user to be logged in.
+    
+    Returns:
+        str: The chatbot HTML page to render.
+    """
 
     # Gets the current conversation (last until session expires aka logs out)
     # or Creates a new one
@@ -17,7 +21,11 @@ def chatbot():
 @chatbot_bp.route('/chat', methods=['POST'])
 @login_required
 def chat():
-    """Handle user messages and return the chatbot responses."""
+    """Handle user messages and return the chatbot responses.
+    
+    Returns:
+        Response: The JSON response message from the chatbot.
+    """
 
     # Get the message from the request
     data = request.json

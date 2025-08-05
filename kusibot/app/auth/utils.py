@@ -8,7 +8,7 @@ def redirect_to_principal_page(is_professional):
     - USER: Goes to /chatbot
     - PROFESSIONAL: Goes to /internal/dashboard
     
-    Parameters:
+    Args:
         is_professional (bool): Indicates if the user is a professional or not.
     Returns:
         Response: Redirect response to the user's principal page.

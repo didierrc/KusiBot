@@ -19,7 +19,7 @@ class BaseState(ABC):
         """
         Generate a response based on the user input and the current state of the assessment.
         
-        Parameters:
+        Args:
             user_input: The input from the user.
             conversation_id: The ID of the current conversation.
             assessment_id: The ID of the current assessment.

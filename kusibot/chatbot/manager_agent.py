@@ -5,12 +5,22 @@ from kusibot.database.db_repositories import AssessmentRepository
 
 class ChatbotManagerAgent:
     """
-    Cental chatbot class that coordinates the different agents to generate a response to the user.
+    Central chatbot class that coordinates the different agents to generate a response to the user.
 
     The chatbot is composed of the following agents:
     - IntentRecognizerAgent: Determines the intent of the user input.
     - ConversationAgent: Generates a response to the user input for "NORMAL" intents.
     - AssesmentAgent: Generates a response to the user input for the rest of the intents and start and assesment.
+
+    Attributes:
+        intent_recognizer (IntentRecognizerAgent): The shared singleton instance
+            of the intent classification agent.
+        conversation_agent (ConversationAgent): The agent responsible for handling
+            general, non-assessment conversation.
+        assesment_agent (AssesmentAgent): The agent responsible for administering
+            mental health questionnaires.
+        assessment_repo (AssessmentRepository): Repository for assessment data
+            access, used to check the current assessment state.
     """
     
     CHATBOT_CONFIDENCE_ASSESMENT_THRESHOLD = 0.5    
@@ -18,13 +28,6 @@ class ChatbotManagerAgent:
     CHATBOT_CONVERSATION_AGENT_TYPE = "Conversation"
 
     def __init__(self):
-        """
-        Initialises the chatbot manager agent with all the agents on its control.
-        - IntentRecognizerAgent: For intent recognition.
-        - ConversationAgent: For generating responses to normal intents.
-        - AssesmentAgent: For generating responses when an assesment is ongoing or to administer one.
-        """
-        
         self.intent_recognizer = IntentRecognizerAgent()
         self.conversation_agent = ConversationAgent()
         self.assesment_agent = AssesmentAgent()
@@ -35,11 +38,11 @@ class ChatbotManagerAgent:
         """
         Orchestrates agents to generate a bot response based on the user input and the current conversation.
         
-        Parameters
+        Args:
             user_input: The message sent by the user.
             conv_id: ID of the current conversation.
             assesment_active: Boolean indicating if an assessment is currently active for the user.
-        Returns
+        Returns:
             response: JSON chatbot response.
         """
         
@@ -69,10 +72,10 @@ class ChatbotManagerAgent:
         Handles the response generation when there is no active assessment.
         Determines the intent of the user input and decides whether to start an assessment or return a normal response.
 
-        Parameters
+        Args:
             user_input: The message sent by the user.
             conversation_id: ID of the current conversation.
-        Returns
+        Returns:
             agent_response: JSON response containing the intent detected, response generated, and agent type.
         """
         

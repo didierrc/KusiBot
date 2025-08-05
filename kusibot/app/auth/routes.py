@@ -22,6 +22,9 @@ def login():
     Login route for KusiBot. Accepts the following methods:
     - GET: Goes to principal page if authenticated, else, goes to Login Page.
     - POST: Log in a user to Kusibot given its username and password.
+    
+    Returns:
+        (Response | str): A redirect response or the HTML login form to render.
     """
 
     # If user is already authenticated, redirect to principal page
@@ -52,6 +55,9 @@ def signup():
     Register route for KusiBot. Accepts the following methods:
     - GET: Goes to principal page if authenticated, else, goes to Register Page.
     - POST: Register a new user in KusiBot.
+
+    Returns:
+        (Response | str): A redirect response or the HTML register form to render.
     """
 
     # If user is already authenticated, redirect to principal page
@@ -86,6 +92,9 @@ def logout():
     """
     Logs out an authenticated user from KusiBot. Accepts the following methods:
     - GET: Logs out, ends any current conversation and returns to Main Page.
+    
+    Returns:
+        Response: A redirect response to the main page.
     """
 
     chatbot_service.end_conversation(current_user.id)
