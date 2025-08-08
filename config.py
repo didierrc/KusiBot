@@ -27,6 +27,7 @@ class TestingConfig(Config):
     
     TESTING = True # Exceptions are propagated rather than handled by the the app’s error handlers.
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:' # In memory DB.
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):
