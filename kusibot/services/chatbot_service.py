@@ -99,7 +99,11 @@ class ChatbotService:
                                            agent_type=bot_response["agent_type"]
         )
             
-        return bot_response["agent_response"]
+        return {
+            "agent_response": bot_response["agent_response"],
+            "agent_type": bot_response["agent_type"],
+            "intent_detected": bot_response["intent_detected"]
+        }
 
     def _get_or_create_chatbot_manager(self, user_id):
         """

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Forbidden - KusiBot{% endblock %}
+
+{% block content %}
+<div class="container text-center my-5">
+    
+    <img src="{{ url_for('static', filename='forbidden_kusibot.png') }}" alt="403 Kusibot Logo" class="img-fluid mb-5" style="max-width: 250px; height: auto;"> 
+
+    <h1>Ooops! It seems you don't have permission to access this resource.</h1>
+    <p>That's all we know.</p>
+    
+    <a href="{{ url_for('main_bp.index') }}" class="btn btn-primary mt-4">Return Home</a>
+    
+</div>
+{% endblock %}

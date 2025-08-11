@@ -65,7 +65,7 @@ def test_ut13_generate_bot_response_assessment_agent(mock_assessment_repo_in_man
     mock_assessment_agent_in_manager_agent.generate_response.assert_called_once()
     mock_conversation_agent_in_manager_agent.generate_response.assert_not_called()
 
-def test_ut14_generate_bot_response_assessment_agent(mock_assessment_repo_in_manager_agent,
+def test_ut14_generate_bot_response_conversation_agent(mock_assessment_repo_in_manager_agent,
                                                      mock_intent_agent_in_manager_agent,
                                                      mock_assessment_agent_in_manager_agent,
                                                      mock_conversation_agent_in_manager_agent,

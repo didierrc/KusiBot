@@ -80,6 +80,11 @@ def create_app(config_name):
   def page_not_found(e):
     """Custom error handler for 404 errors."""
     return render_template('not_found.html'), 404
+  
+  @app.errorhandler(403)
+  def page_forbidden(e):
+    """Custom error handler for 403 errors."""
+    return render_template('forbidden.html'), 403
 
   return app
 
