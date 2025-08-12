@@ -1,14 +1,11 @@
 import pytest
 from unittest.mock import patch
-from kusibot.services import chatbot_service
 from kusibot.database.models import User, Message, Assessment
 from app import bcrypt
 
 @pytest.fixture(scope="function")
 def db_standard(it_db_session):
     """A database session with one registered standard user with no conversations."""
-
-    it_db_session.delete
 
     standard_user = User(
         username = "test_user",

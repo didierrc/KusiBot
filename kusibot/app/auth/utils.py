@@ -36,3 +36,18 @@ def standard_user_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def professional_user_required(f):
+    """
+    A decorator function to ensure professional users have access to
+    the allowed views. If user is not professional, it aborts with a 403
+    Forbidden error.
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_professional:
+            abort(403)
+        return f(*args, **kwargs)
+
+    return decorated_function
