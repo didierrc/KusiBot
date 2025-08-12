@@ -1,80 +1,5 @@
-import pytest
 from unittest.mock import patch
-from datetime import datetime, timezone, timedelta
-from kusibot.database.models import User, Conversation, Message, Assessment, AssessmentQuestion
-from app import bcrypt
-
-@pytest.fixture(scope="function")
-def db_users(it_db_session):
-    """A database session with registered standard users with useful data."""
-
-    # Create four users...
-    for user_number in range(1,5):
-        username = "user" + str(user_number)
-        email = username + "@email.com"
-        it_db_session.add(User(username=username, email=email, 
-                               password=bcrypt.generate_password_hash("Password123!").decode("utf-8")))
-    it_db_session.commit()
-
-    # USER 1 - two conversations with messages -> use in it24, it26, it28, it31
-    user1 = it_db_session.query(User).filter_by(username="user1").first()
-    
-    old_conv = Conversation(user=user1, 
-                            created_at=datetime.now(timezone.utc) - timedelta(days=2), 
-                            finished_at=datetime.now(timezone.utc) - timedelta(days=1))
-    new_conv = Conversation(user=user1)
-    old_msg = Message(conversation=old_conv, text="Hello in the past...", is_user=True)
-    new_msg = Message(conversation=new_conv, text="Hello now...", is_user=True)
-    it_db_session.add_all([old_conv, old_msg, new_conv, new_msg])
-
-    # USER 2 - no conversations -> use in it26, it29
-    # USER 3 - single conversation that triggered an assessment and all questions answered -> use to it30, it32
-    # (Assessment of a single question)
-    user3 = it_db_session.query(User).filter_by(username="user3").first()
-
-    conv3 = Conversation(user=user3)
-    msg_array3 = [Message(conversation=conv3, text="I think I may have depression...", is_user=True, intent="Depression"),
-                 Message(conversation=conv3, text="Hey, let me help you with that...", is_user=False, agent_type="Assesment"),
-                 Message(conversation=conv3, text="Yeah I have been feeling that way since...", is_user=True),
-                 Message(conversation=conv3, text="I feel you...Scale it...", is_user=False, agent_type="Assesment"),
-                 Message(conversation=conv3, text="2", is_user=True),
-                 Message(conversation=conv3, text="That's all. Thanks for sharing...", is_user=False, agent_type="Assesment")]
-    assess3 = Assessment(user=user3, assessment_type="PHQ-9", message_trigger="I think I may have depression...",
-                         start_time=datetime.now(timezone.utc) - timedelta(minutes=10),
-                         end_time=datetime.now(timezone.utc) - timedelta(minutes=5),
-                         total_score=2,
-                         interpretation="Mild depression",
-                         current_question=1, current_state="Finished",
-                         last_free_text="Yeah I have been feeling that way since...")
-    assess_question3 = AssessmentQuestion(assessment=assess3, question_number=1,
-                                          question_text="Hey, let me help you with that...",
-                                          user_response="Yeah I have been feeling that way since...",
-                                          categorized_value=2)
-    it_db_session.add_all([conv3, *msg_array3, assess3, assess_question3])
-    
-    # USER 4 - single conversation that triggered an assessment (incomplete) -> it33
-    user4 = it_db_session.query(User).filter_by(username="user4").first()
-
-    conv4 = Conversation(user=user4, created_at=datetime.now(timezone.utc) - timedelta(days=2), 
-                            finished_at=datetime.now(timezone.utc) - timedelta(days=1))
-    msg_array4 = [Message(conversation=conv4, text="I think I may have depression...", is_user=True, intent="Depression"),
-                 Message(conversation=conv4, text="Hey, let me help you with that...", is_user=False, agent_type="Assesment"),
-                 Message(conversation=conv4, text="Yeah I have been feeling that way since...", is_user=True)]
-    assess4 = Assessment(user=user4, assessment_type="PHQ-9", message_trigger="I think I may have depression...",
-                         start_time=datetime.now(timezone.utc) - timedelta(minutes=2),
-                         end_time=datetime.now(timezone.utc) - timedelta(minutes=1),
-                         current_question=1, current_state="WaitingCategorisation",
-                         last_free_text="Yeah I have been feeling that way since...")
-    assess_question4 = AssessmentQuestion(assessment=assess4, question_number=1,
-                                          question_text="Hey, let me help you with that...",
-                                          user_response="Yeah I have been feeling that way since...")
-    it_db_session.add_all([conv4, *msg_array4, assess4, assess_question4])
-    
-    
-    # Commiting all changes
-    it_db_session.commit()
-
-    return it_db_session
+from kusibot.database.models import User
 
 # ---- Test for UC08, UC09 and UC10: Professional Interactions  ----
 
@@ -86,7 +11,7 @@ def test_it23_enter_dashboard_unauthenticated(client):
     assert len(response.history) == 1 # There was a redirect to the Login page
     assert b"Login" in response.data
 
-def test_it24_enter_dashboard_standard(db_users, client):
+def test_it24_enter_dashboard_standard(db_uc_08, client):
     
     # Action: POST /auth/login as Standard
     response = client.post("/auth/login", data = {
@@ -104,7 +29,7 @@ def test_it24_enter_dashboard_standard(db_users, client):
     assert response.status_code == 403 # Access denied
     assert b"Forbidden" in response.data
 
-def test_it25_enter_dashboard_professional(db_users, client):
+def test_it25_enter_dashboard_professional(db_uc_08, client):
     
     # Action: POST /auth/login as Standard
     response = professional_login(client)
@@ -116,6 +41,9 @@ def test_it25_enter_dashboard_professional(db_users, client):
         assert bytes(user, "utf-8") in response.data
 
     professional_logout(client)
+
+def test_it26_filter_user_list(db_uc_08, client):
+    pass
 
 @patch('kusibot.app.dashboard.routes.dashboard_service')
 def test_it27_error_fetching_users(mock_service, it_db_session, client):
@@ -129,10 +57,10 @@ def test_it27_error_fetching_users(mock_service, it_db_session, client):
     # 3. Asserts (dashboard should display an error message)
     assert b"There was an error while fetching the users. Try again later." in response.data
 
-def test_it28_dashboard_see_last_conversation(db_users, client):
+def test_it28_dashboard_see_last_conversation(db_uc_08, client):
     
     # Get user under test
-    user1 = db_users.query(User).filter_by(username="user1").first()
+    user1 = db_uc_08.query(User).filter_by(username="user1").first()
 
     # 1. Action: POST /auth/login as Standard
     professional_login(client)
@@ -147,10 +75,10 @@ def test_it28_dashboard_see_last_conversation(db_users, client):
 
     professional_logout(client)
 
-def test_it29_dashboard_see_no_conversation(db_users,client):
+def test_it29_dashboard_see_no_conversation(db_uc_08,client):
     
     # Get user under test
-    user2 = db_users.query(User).filter_by(username="user2").first()
+    user2 = db_uc_08.query(User).filter_by(username="user2").first()
 
     # 1. Action: POST /auth/login as Standard
     professional_login(client)
@@ -164,10 +92,10 @@ def test_it29_dashboard_see_no_conversation(db_users,client):
 
     professional_logout(client)
 
-def test_it30_dashboard_see_assessments(db_users,client):
+def test_it30_dashboard_see_assessments(db_uc_08,client):
     
     # Get user under test
-    user3 = db_users.query(User).filter_by(username="user3").first()
+    user3 = db_uc_08.query(User).filter_by(username="user3").first()
 
     # 1. Action: POST /auth/login as Standard
     professional_login(client)
@@ -183,10 +111,10 @@ def test_it30_dashboard_see_assessments(db_users,client):
 
     professional_logout(client)
 
-def test_it31_dashboard_see_no_assessments(db_users,client):
+def test_it31_dashboard_see_no_assessments(db_uc_08,client):
     
     # Get user under test
-    user1 = db_users.query(User).filter_by(username="user1").first()
+    user1 = db_uc_08.query(User).filter_by(username="user1").first()
 
     # 1. Action: POST /auth/login as Standard
     response = professional_login(client)
@@ -197,10 +125,10 @@ def test_it31_dashboard_see_no_assessments(db_users,client):
     json = response.get_json()
     assert len(json["assessments"]) == 0
 
-def test_it32_dashboard_detail_complete_assessment(db_users,client):
+def test_it32_dashboard_detail_complete_assessment(db_uc_08,client):
     
     # Get user under test
-    user3 = db_users.query(User).filter_by(username="user3").first()
+    user3 = db_uc_08.query(User).filter_by(username="user3").first()
 
     # 1. Action: POST /auth/login as Standard
     professional_login(client)
@@ -215,10 +143,10 @@ def test_it32_dashboard_detail_complete_assessment(db_users,client):
     assert json["assessments"][0]["questions"][0]["question_text"] == "Hey, let me help you with that..."
     assert json["assessments"][0]["questions"][0]["categorized_value"] == 2
 
-def test_it33_dashboard_detail_incomplete_assessment(db_users, client):
+def test_it33_dashboard_detail_incomplete_assessment(db_uc_08, client):
     
     # Get user under test
-    user4 = db_users.query(User).filter_by(username="user4").first()
+    user4 = db_uc_08.query(User).filter_by(username="user4").first()
 
     # 1. Action: POST /auth/login as Standard
     professional_login(client)

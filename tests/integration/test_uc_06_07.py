@@ -1,21 +1,5 @@
-import pytest
 from unittest.mock import patch
-from kusibot.database.models import User, Message, Assessment
-from app import bcrypt
-
-@pytest.fixture(scope="function")
-def db_standard(it_db_session):
-    """A database session with one registered standard user with no conversations."""
-
-    standard_user = User(
-        username = "test_user",
-        email = "test@email.com",
-        password = bcrypt.generate_password_hash("Password123!").decode('utf-8')
-    )
-    it_db_session.add(standard_user)
-    it_db_session.commit()
-
-    return it_db_session
+from kusibot.database.models import Message, Assessment
 
 # ---- Test for UC06 and UC07: Conduct a Chat Conversation and
 # Complete an Assessment  ----
@@ -49,7 +33,7 @@ def test_it17_enter_chatbot_professional(it_db_session, client):
 
 @patch('kusibot.chatbot.manager_agent.ConversationAgent')
 @patch('kusibot.chatbot.manager_agent.AssesmentAgent')
-def test_it18_detect_normal_intent(mock_assessment_agent, mock_conversation_agent, db_standard, client):
+def test_it18_detect_normal_intent(mock_assessment_agent, mock_conversation_agent, db_uc_06, client):
     
     # 1. Log in a Standard user
     standard_user_login(client)
@@ -75,7 +59,7 @@ def test_it18_detect_normal_intent(mock_assessment_agent, mock_conversation_agen
     mock_conversation_agent_instance.generate_response.assert_called_once()
     mock_assessment_agent_instance.generate_response.assert_not_called()
 
-    messages_stored = db_standard.query(Message)\
+    messages_stored = db_uc_06.query(Message)\
                              .filter_by(conversation_id="1")\
                              .all()
     assert len(messages_stored) == 3 # Checking messages are stored (1. Greeting 2. User 3. Bot)
@@ -87,7 +71,7 @@ def test_it18_detect_normal_intent(mock_assessment_agent, mock_conversation_agen
 
 @patch('kusibot.chatbot.manager_agent.ConversationAgent')
 @patch('kusibot.chatbot.manager_agent.AssesmentAgent')
-def test_it19_detect_distress_intent(mock_assessment_agent, mock_conversation_agent, db_standard, client):
+def test_it19_detect_distress_intent(mock_assessment_agent, mock_conversation_agent, db_uc_06, client):
     
     # 1. Log in a Standard user
     standard_user_login(client)
@@ -119,7 +103,7 @@ def test_it19_detect_distress_intent(mock_assessment_agent, mock_conversation_ag
     standard_user_logout(client)
 
 @patch('kusibot.chatbot.assesment_agent.AssesmentAgent._load_questionnaires')
-def test_it20_complete_assessment(mock_questionnaires, db_standard, client):
+def test_it20_complete_assessment(mock_questionnaires, db_uc_06, client):
 
     # 1. Mock the questionnaires to simplify it
     mock_questionnaires_data = {
@@ -165,7 +149,7 @@ def test_it20_complete_assessment(mock_questionnaires, db_standard, client):
     assert "thank" in json_response["response"].lower()
     assert "Assesment" in json_response["agent_type"]
 
-    assessment = db_standard.query(Assessment).all()
+    assessment = db_uc_06.query(Assessment).all()
     assert len(assessment) == 1
     assessment = assessment[0]
     assert assessment is not None
@@ -176,12 +160,9 @@ def test_it20_complete_assessment(mock_questionnaires, db_standard, client):
     # 7. Log out
     standard_user_logout(client)
 
-    
-
-
 @patch('kusibot.chatbot.manager_agent.AssesmentAgent')
 @patch('kusibot.chatbot.manager_agent.ConversationAgent')
-def test_it21_no_assessment_available(mock_conversation_agent, mock_assessment_agent, db_standard, client):
+def test_it21_no_assessment_available(mock_conversation_agent, mock_assessment_agent, db_uc_06, client):
     
     # 1. Log in a Standard user
     standard_user_login(client)
@@ -214,7 +195,7 @@ def test_it21_no_assessment_available(mock_conversation_agent, mock_assessment_a
     standard_user_logout(client)
 
 @patch('kusibot.services.chatbot_service.ChatbotManagerAgent')
-def test_it22_ai_error_response(mock_manager_agent, db_standard, client):
+def test_it22_ai_error_response(mock_manager_agent, db_uc_06, client):
     
     # 1. Log in a Standard user
     standard_user_login(client)
@@ -235,7 +216,6 @@ def test_it22_ai_error_response(mock_manager_agent, db_standard, client):
 
     # 5. Logout
     standard_user_logout(client)
-
 
 
 # ---- Utils functions ----

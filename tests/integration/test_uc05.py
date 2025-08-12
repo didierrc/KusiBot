@@ -1,36 +1,4 @@
-import pytest
-from app import bcrypt
-from kusibot.database.models import User, Conversation, Assessment
-
-@pytest.fixture(scope="function")
-def db_uc05(it_db_session):
-    """A database session with one registered standard user and
-    an active conversation and assessment."""
-
-    standard_user = User(
-        username = "test_user",
-        email = "test@email.com",
-        password = bcrypt.generate_password_hash("Password123!").decode('utf-8')
-    )
-    it_db_session.add(standard_user)
-    it_db_session.commit()
-    it_db_session.refresh(standard_user)
-
-    active_conversation = Conversation(user_id = standard_user.id)
-    it_db_session.add(active_conversation)
-
-    active_assessment = Assessment( 
-        user_id = standard_user.id,
-        assessment_type = "PHQ-9",
-        message_trigger = "I've been feeling bad...",
-        current_question = 1,
-        current_state = "Finished"
-    )
-    it_db_session.add(active_assessment)
-    
-    it_db_session.commit()
-
-    return it_db_session
+from kusibot.database.models import Conversation, Assessment
 
 # ---- Test for UC05: Log Out of the System ----
 

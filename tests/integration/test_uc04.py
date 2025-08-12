@@ -1,22 +1,4 @@
-import pytest
 from unittest.mock import patch
-from kusibot.database.models import User
-from app import bcrypt
-
-@pytest.fixture(scope="function")
-def db_uc04(it_db_session):
-    """A database session with one registered standard user."""
-
-    standard_user = User(
-        username = "test_user",
-        email = "test@email.com",
-        password = bcrypt.generate_password_hash("Password123!").decode('utf-8')
-    )
-
-    it_db_session.add(standard_user)
-    it_db_session.commit()
-
-    return it_db_session
 
 # ---- Test for UC04: Log In to the System ----
 
