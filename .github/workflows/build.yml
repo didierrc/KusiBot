@@ -39,6 +39,9 @@ jobs:
       #               Running tests
       #----------------------------------------------
       - name: Run tests
+        env:
+          PROFESSIONAL_USERNAME: "test_ci_professional"
+          PROFESSIONAL_PASSWORD: "test_ci_password"
         run: |
           poetry run pytest
       #----------------------------------------------
