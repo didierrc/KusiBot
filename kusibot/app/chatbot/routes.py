@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from kusibot.services import chatbot_service
 from kusibot.app.auth.utils import standard_user_required
+import traceback
 
 chatbot_bp = Blueprint('chatbot_bp', __name__, template_folder='templates', static_folder='static')
 
@@ -49,7 +50,11 @@ def chat():
             'intent': bot_response["intent_detected"]
         })
     
-    except Exception:
+    except Exception as e:
+
+        print(f"!!! An unexpected error occurred in the chat route: {e}")
+        print(traceback.format_exc())
+
         return jsonify({
             'response': CHAT_ERROR_MSG,
             'agent_type': None,
