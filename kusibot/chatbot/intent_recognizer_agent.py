@@ -136,6 +136,15 @@ class IntentRecognizerAgent(metaclass=IntentRecognizerSingletonMeta):
             float: The confidence of the prediction (if return_confidence is True).
         """
 
+        print("INTENT RECOGNISER STATUS:")
+        print("--> Device: " + str(self.device))
+        print("--> Tokenizer: " + str(self.model))
+        print("--> Model: " + str(self.model))
+        print("--> Label: " + str(self.label_mapping))
+
+
+        
+
         # Get input tensors
         input_ids, attention_mask = self._get_input_tensors_from_text(text)
 
