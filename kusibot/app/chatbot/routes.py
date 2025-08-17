@@ -52,9 +52,6 @@ def chat():
     
     except Exception as e:
 
-        print(f"!!! An unexpected error occurred in the chat route: {e}")
-        print(traceback.format_exc())
-
         return jsonify({
             'response': CHAT_ERROR_MSG,
             'agent_type': None,

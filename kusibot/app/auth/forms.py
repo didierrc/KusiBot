@@ -60,7 +60,8 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', 
                         validators=[DataRequired(), Email()],
                         render_kw={'placeholder': 'kusibot@email.com'})
-    password = PasswordField('Password', 
+    password = PasswordField('Password',
+                             id='password_register',
                              validators=[DataRequired(), 
                                          Length(min=8, max=64, message='Password must be between 8 and 64 characters.'),
                                          Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#?!@$%^&*-])[A-Za-z\d#?!@$%^&*-]{8,}$',

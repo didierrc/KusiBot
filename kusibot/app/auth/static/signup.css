@@ -1,0 +1,11 @@
+#password-strength-indicator {
+    font-size: 0.9em;
+}
+
+#password-strength-indicator .invalid {
+    color: #dc3545;
+}
+
+#password-strength-indicator .valid {
+    color: #0c4160;
+}

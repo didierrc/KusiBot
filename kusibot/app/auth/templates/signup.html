@@ -2,6 +2,11 @@
 
 {% block title %}Sign Up - KusiBot{% endblock %}
 
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('auth_bp.static', filename='signup.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center mt-4 mb-5">
     <div class="col-md-8 col-lg-6 col-xl-5"> 
