@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Help - KusiBot{% endblock %}
+
+{% block content %}
+<div class="row py-5 justify-content-center aling-items-center">
+    <div class="col-lg-10">
+
+        <h1 class="mb-4 text-center border-bottom pb-3"><i class="fa-solid fa-book-open-reader me-2"></i>How to Use KusiBot</h1>
+
+        {% if current_user.is_authenticated and not current_user.is_professional %}
+        <section id="standard-user-guide">
+            <h2 class="h4 mb-3">Guide for Standard Users</h2>
+            <p class="lead">Welcome to KusiBot! Here's a simple guide of what you can do here.</p>
+            
+            <div class="accordion" id="standardUserAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingStandOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStandOne" aria-expanded="true" aria-controls="collapseStandOne">
+                            <strong>Starting a Conversation</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseStandOne" class="accordion-collapse collapse show" aria-labelledby="headingStandOne" data-bs-parent="#standardUserAccordion">
+                        <div class="accordion-body">
+                            Simply start typing in the message box on the <a href="{{ url_for('chatbot_bp.chatbot') }}">Chat</a> page. You can talk about anything that's on your mind—how your day was, what you're feeling, or any specific concerns you have. KusiBot is here to listen without judgment.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingStandTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStandTwo" aria-expanded="false" aria-controls="collapseStandTwo">
+                            <strong>How Assessments Work</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseStandTwo" class="accordion-collapse collapse" aria-labelledby="headingStandTwo" data-bs-parent="#standardUserAccordion">
+                        <div class="accordion-body">
+                            If your conversation indicates you might be experiencing symptoms of depression or anxiety, KusiBot may guide you through a standardised questionnaire. This process is conversational: KusiBot will ask you one question at a time. Your answers help provide insights that a healthcare professional can review.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingStandThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStandThree" aria-expanded="false" aria-controls="collapseStandThree">
+                            <strong>Accessing Crisis Support (SOS)</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseStandThree" class="accordion-collapse collapse" aria-labelledby="headingStandThree" data-bs-parent="#standardUserAccordion">
+                        <div class="accordion-body">
+                            If you are in serious distress, please use the <a href="{{ url_for('main_bp.sos') }}">SOS</a> page at any time. This page provides immediate access to professional crisis support hotlines and resources. <strong>KusiBot is not a crisis intervention tool.</strong>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </section>
+
+        {% elif current_user.is_authenticated and current_user.is_professional %}
+        <section id="professional-user-guide">
+            <h2 class="h4 mb-3">Guide for Professionals</h2>
+            <p class="lead">This guide explains how to use the KusiBot dashboard to monitor standard user interactions.</p>
+
+            <div class="accordion" id="professionalUserAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingProfOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfOne" aria-expanded="true" aria-controls="collapseProfOne">
+                            <strong>Navigating the Dashboard</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseProfOne" class="accordion-collapse collapse show" aria-labelledby="headingProfOne" data-bs-parent="#professionalUserAccordion">
+                        <div class="accordion-body">
+                            The <a href="{{ url_for('professional_bp.dashboard') }}">Dashboard</a> is your main workspace. The left sidebar displays a list of all registered standard users. You can use the search bar to filter this list by username. Clicking on a user will load their data into the main panel.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingProfTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfTwo" aria-expanded="false" aria-controls="collapseProfTwo">
+                            <strong>Reviewing Conversation History</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseProfTwo" class="accordion-collapse collapse" aria-labelledby="headingProfTwo" data-bs-parent="#professionalUserAccordion">
+                        <div class="accordion-body">
+                            After selecting a user, the <strong>Conversations</strong> tab will be active by default. This panel displays a filterable list of all conversations the user has had with the chatbot, sorted by date and ID. Click on any conversation to view its full transcript.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingProfThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfThree" aria-expanded="false" aria-controls="collapseProfThree">
+                            <strong>Analysing Assessment Results</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseProfThree" class="accordion-collapse collapse" aria-labelledby="headingProfThree" data-bs-parent="#professionalUserAccordion">
+                        <div class="accordion-body">
+                            Click the <strong>Assessments</strong> tab to view a history of all questionnaires a user has fully or partially completed. Each entry shows the assessment type, the completion date, and the final interpretation. You can click on an entry to expand it and see a detailed breakdown of each question, the user's free-text response, the categorized value, and the total score.
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </section>
+
+        {% else %}
+        <section id="guest-user-guide" class="text-center mt-5">
+            <h2 class="h4 mb-3">What is this?</h2>
+            <p class="lead">KusiBot is a safe space to talk about your well-being and a tool for initial mental health self-assessment.</p>
+            <p>To get started and begin chatting with KusiBot, you'll need to create an account or log in.</p>
+            <div class="mt-4">
+                <a href="{{ url_for('auth_bp.login') }}" class="btn btn-primary">Log In</a>
+                <a href="{{ url_for('auth_bp.signup') }}" class="btn btn-secondary">Create an Account</a>
+            </div>
+            <p class="mt-5">If you want to learn more about the project's purpose and how it works, please visit the <a href="{{ url_for('main_bp.about') }}">About KusiBot</a> page.</p>
+        </section>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
