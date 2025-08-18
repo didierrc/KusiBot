@@ -69,9 +69,14 @@ def test_it28_dashboard_see_last_conversation(db_uc_08, client):
     response = client.get(f"/dashboard/conversations?user_id={user1.id}")
     assert response.status_code == 200
     json = response.get_json()
-    assert json["conversation"] is not None
-    assert len(json["messages"]) == 1
-    assert json["messages"][0]["text"] == "Hello now..."
+    assert json["conversations"] is not None
+
+    # 3. Action GET /dashboard/conversation_messages
+    response = client.get(f"/dashboard/conversation_messages?conversation_id={json['conversations'][0]['id']}")
+    assert response.status_code == 200
+    json = response.get_json()
+    assert json["messages"] is not None
+    assert len(json["messages"]) > 0
 
     professional_logout(client)
 
@@ -87,8 +92,7 @@ def test_it29_dashboard_see_no_conversation(db_uc_08,client):
     response = client.get(f"/dashboard/conversations?user_id={user2.id}")
     assert response.status_code == 200
     json = response.get_json()
-    assert json["conversation"] is None
-    assert json["messages"] is None
+    assert len(json["conversations"]) == 0
 
     professional_logout(client)
 

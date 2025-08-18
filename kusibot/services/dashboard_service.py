@@ -44,46 +44,61 @@ class DashboardService:
 
         return user_data 
     
-    def get_conversation_for_user(self, user_id):
+    def get_conversations_for_user(self, user_id):
         """
-        Retrieves the last conversation and its messages for a given user.
+        Retrieves the conversation history for a given user.
         
         Args:
             user_id: The ID of the user for whom to retrieve the conversation.
         Returns:
-            dict: A dictionary containing the conversation details and messages.
+            dict: A dictionary containing the conversation history with the needed details.
         """
 
         response = {
-            'conversation': None,
-            'messages': None
+            'conversations': []
         }
 
-        # Getting the last conversation
-        conversation = self.conv_repo.get_last_conversation_by_user_id(user_id)
-        if not conversation:
+        # Getting all the conversations
+        conversations = self.conv_repo.get_all_conversations_by_user_id(user_id)
+        if not conversations:
             return response
-        else:
-            response['conversation'] = {
+        
+        for conversation in conversations:
+            response['conversations'].append({
                 'id': conversation.id,
                 'created_at': conversation.created_at,
                 'finished_at': conversation.finished_at
-            }
+            })
 
-        # Getting messages for the conversation
-        messages = self.msg_repo.get_messages_by_conversation_id(conversation.id)
+        return response
+    
+    def get_conversation_messages(self, conversation_id):
+        """
+        Retrieves the messages of a specific conversation by its ID.
+        
+        Args:
+            conversation_id: The ID of the conversation to retrieve.
+        Returns:
+            dict: A dictionary containing the conversation messages.
+        """
+
+        response = {
+            'messages': []
+        }
+
+        # Getting the messages for the conversation
+        messages = self.msg_repo.get_messages_by_conversation_id(conversation_id)
         if not messages:
             return response
-        else:
-            response['messages'] = []
-            for message in messages:
-                response['messages'].append({
-                    'id': message.id,
-                    'text': message.text,
-                    'timestamp': message.timestamp,
-                    'is_user': message.is_user,
-                    'intent': message.intent
-                })
+        
+        for message in messages:
+            response['messages'].append({
+                'id': message.id,
+                'text': message.text,
+                'timestamp': message.timestamp,
+                'is_user': message.is_user,
+                'intent': message.intent
+            })
 
         return response
         

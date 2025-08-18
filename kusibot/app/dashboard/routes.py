@@ -31,7 +31,7 @@ def dashboard():
 @login_required
 @professional_user_required
 def dashboard_conversations():
-    """Get the conversation for a selected user (URL parameter).
+    """Get the conversations history for a selected user (URL parameter).
     
     Returns:
         Response: The JSON conversations for the given user.
@@ -41,7 +41,24 @@ def dashboard_conversations():
     if user_id is None:
         return jsonify({'error': 'user_id is required'}), 400
     
-    response = dashboard_service.get_conversation_for_user(user_id)
+    response = dashboard_service.get_conversations_for_user(user_id)
+    return jsonify(response)
+
+@professional_bp.route('/conversation_messages')
+@login_required
+@professional_user_required
+def dashboard_conversation_messages():
+    """Get the conversation messages for a specific conversation ID (URL parameter).
+    
+    Returns:
+        Response: The JSON details of the specified conversation.
+    """
+    
+    conversation_id = request.args.get('conversation_id', type=int)
+    if conversation_id is None:
+        return jsonify({'error': 'conversation_id is required'}), 400
+
+    response = dashboard_service.get_conversation_messages(conversation_id)
     return jsonify(response)
 
 @professional_bp.route('/assessments')

@@ -33,68 +33,6 @@ function addSearchToSidebars() {
     searchUserEvent(`${searchInputIdDefault}Small`)
 }
 
-async function getConversationHistory(userId) {
-
-    try {
-
-        // Fetch conversation history
-        const response = await fetch(`${DASHBOARD_URL}conversations?user_id=${userId}`)
-        if (!response.ok)
-            throw new Error(`HTTP error. Status: ${response.status}`)
-
-        const data = await response.json()
-
-        if (!data.messages || data.messages.length === 0) {
-            const pNoMessages = document.createElement('p')
-            pNoMessages.innerHTML = 'No messages found'
-            return [pNoMessages]
-        }
-
-        // Create messages divs
-        let div_messages = []
-        for (const message of data.messages) {
-            const messageDiv = document.createElement('div')
-            messageDiv.classList.add('mb-2')
-            messageDiv.classList.add('p-2')
-            messageDiv.classList.add('rounded')
-            messageDiv.classList.add('bg-white')
-            messageDiv.classList.add('border')
-            messageDiv.classList.add('shadow-sm')
-
-            const messageStrong = document.createElement('strong')
-
-            const messageTimestamp = document.createElement('small')
-            messageTimestamp.classList.add('d-block')
-            messageTimestamp.classList.add('text-muted')
-            messageTimestamp.classList.add('mt-1')
-            messageTimestamp.textContent = new Date(message.timestamp).toLocaleString()
-
-            if (message.is_user) {
-                messageDiv.classList.add('text-end')
-                messageStrong.classList.add('text-secondary')
-                messageStrong.textContent = 'User: '
-            } else {
-                messageStrong.classList.add('text-primary')
-                messageStrong.textContent = 'Bot: '
-            }
-
-            messageDiv.appendChild(messageStrong)
-            messageDiv.appendChild(document.createTextNode(message.text))
-            messageDiv.appendChild(messageTimestamp)
-
-            div_messages.push(messageDiv)
-        }
-
-        return div_messages
-
-    } catch (error) {
-        console.error('Error fetching conversation history:', error)
-        const pError = document.createElement('p')
-        pError.innerHTML = 'Error fetching conversation history'
-        return [pError]
-    }
-
-}
 
 function getBadgeClassForInterpretation(interpretation) {
     const interpretationLower = interpretation ? interpretation.toLowerCase() : 'none'
@@ -166,7 +104,7 @@ function createCollapseBodyAssessment(assessment) {
 
 async function getAssessmentsHistory(userId) {
 
-    assesment_date_options = {
+    let assesment_date_options = {
         year: '2-digit',
         month: '2-digit',
         day: '2-digit',
@@ -250,6 +188,131 @@ async function getAssessmentsHistory(userId) {
     }
 }
 
+async function getAndDisplayConversationMessages(conversation) {
+
+    // Getting elements to modify
+    const conversationHistory = document.querySelector('.conversation-history')
+    const loadingIndicator = document.querySelector('.loadingConversation')
+    const infoElement = document.getElementById('selectedConversationInfo')
+
+    // Show loading indicator and clear previous messages
+    loadingIndicator.classList.remove('d-none')
+    infoElement.textContent = `Conversation ID: ${conversation.id} - Created at: ${new Date(conversation.created_at).toLocaleString()} - Finished at: ${conversation.finished_at ? new Date(conversation.finished_at).toLocaleString() : 'Not Finished'}`
+    conversationHistory.innerHTML = ''
+
+    // Fetch conversation messages
+    try {
+
+        // Fetch conversation history
+        const response = await fetch(`${DASHBOARD_URL}conversation_messages?conversation_id=${conversation.id}`)
+        if (!response.ok)
+            throw new Error(`HTTP error. Status: ${response.status}`)
+
+        const data = await response.json()
+
+        if (!data.messages || data.messages.length === 0) {
+            historyContainer.innerHTML = '<p class="text-muted text-center">No messages found for this conversation.</p>'
+            return
+        }
+
+        // Create and append each message element
+        data.messages.forEach(message => {
+            const messageDiv = document.createElement('div')
+            messageDiv.classList.add('mb-2')
+            messageDiv.classList.add('p-2')
+            messageDiv.classList.add('rounded')
+            messageDiv.classList.add('bg-white')
+            messageDiv.classList.add('border')
+            messageDiv.classList.add('shadow-sm')
+
+            const messageStrong = document.createElement('strong')
+
+            const messageTimestamp = document.createElement('small')
+            messageTimestamp.classList.add('d-block')
+            messageTimestamp.classList.add('text-muted')
+            messageTimestamp.classList.add('mt-1')
+            messageTimestamp.textContent = new Date(message.timestamp).toLocaleString()
+
+            if (message.is_user) {
+                messageDiv.classList.add('text-end')
+                messageStrong.classList.add('text-secondary')
+                messageStrong.textContent = 'User: '
+            } else {
+                messageStrong.classList.add('text-primary')
+                messageStrong.textContent = 'Bot: '
+            }
+
+            messageDiv.appendChild(messageStrong)
+            messageDiv.appendChild(document.createTextNode(message.text))
+            messageDiv.appendChild(messageTimestamp)
+
+            conversationHistory.appendChild(messageDiv)
+        })
+
+
+    } catch (error) {
+        console.error('Error fetching conversation messages:', error)
+        conversationHistory.innerHTML = '<p class="text-danger text-center">Error fetching conversation history.</p>'
+    } finally {
+        loadingIndicator.classList.add('d-none')
+    }
+}
+
+async function populateConversationSelector(userId) {
+    const selector = document.getElementById('conversationSelector')
+    selector.innerHTML = '' // Clear previous conversations
+
+    try {
+        // Fetch conversations for the user
+        const response = await fetch(`${DASHBOARD_URL}conversations?user_id=${userId}`)
+        if (!response.ok)
+            throw new Error('Failed to fetch conversations')
+
+        const data = await response.json()
+
+        if (!data.conversations || data.conversations.length === 0) {
+            selector.innerHTML = '<li><a class="dropdown-item disabled" href="#">No conversations found</a></li>'
+            document.querySelector('.loadingConversation').classList.add('d-none')
+            document.querySelector('.conversation-history').innerHTML = '<p class="text-muted text-center">No conversations found for this user.</p>'
+            return
+        }
+
+        // Populate the selector with conversations
+        data.conversations.forEach(conv => {
+            const option = document.createElement('li')
+            const link = document.createElement('a')
+            link.className = 'dropdown-item'
+            link.href = '#'
+            link.textContent = `Conv ${conv.id} - ${new Date(conv.created_at).toLocaleString()}`
+            link.addEventListener('click', async function (event) {
+                event.preventDefault()
+                getAndDisplayConversationMessages(conv)
+
+                // Mark the selected conversation as active
+                const activeLink = document.querySelector('#conversationSelector .dropdown-item.active')
+                if (activeLink) {
+                    activeLink.classList.remove('active')
+                }
+                link.classList.add('active')
+
+
+            })
+
+            option.appendChild(link)
+            selector.appendChild(option)
+        })
+
+        // Automatically load the most recent conversation
+        if (data.conversations.length > 0) {
+            getAndDisplayConversationMessages(data.conversations[0]);
+        }
+
+    } catch (error) {
+        console.error('Error fetching conversations:', error)
+        selector.innerHTML = '<li><a class="dropdown-item disabled" href="#">Error loading conversations</a></li>'
+    }
+}
+
 async function updateUserDataArea(userId, userName) {
 
     // Update Selected User Title
@@ -257,19 +320,11 @@ async function updateUserDataArea(userId, userName) {
     if (selectedUserSpan)
         selectedUserSpan.textContent = userName
 
-    const conversationHistory = document.querySelector('.conversation-history');
-    const assessmentsAccordion = document.getElementById('assessmentsAccordion');
+    // Populate the Conversation selector
+    populateConversationSelector(userId)
 
-    // Fetch Conversations
-    if (conversationHistory) {
-        document.querySelector('.loadingConversation').classList.remove('d-none')
-        conversationHistory.innerHTML = ''
-        conversationHistory.append(...await getConversationHistory(userId))
-        document.querySelector('.loadingConversation').classList.add('d-none')
-    }
-
-
-    // Populate Assessments (Placeholder Example)
+    // Populate Assessments
+    const assessmentsAccordion = document.getElementById('assessmentsAccordion')
     if (assessmentsAccordion) {
         document.querySelector('.loadingAssessments').classList.remove('d-none')
         assessmentsAccordion.innerHTML = ''

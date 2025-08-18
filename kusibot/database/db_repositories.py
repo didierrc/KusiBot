@@ -180,6 +180,26 @@ class ConversationRepository:
             print(f"Error ending conversation: {e}")
             db.session.rollback()
 
+    def get_all_conversations_by_user_id(self, user_id):
+        """
+        Retrieve all conversations for a given user, ordered by creation time in descending order.
+
+        Args:
+            user_id: The ID of the user whose conversations are to be retrieved.
+        Returns:
+            list: A list of Conversation objects.
+        """
+
+        try:
+            return db.session.query(Conversation)\
+                             .filter_by(user_id=user_id)\
+                             .order_by(Conversation.created_at.desc())\
+                             .all()
+        except Exception as e:
+            print(f"Error retrieving conversations: {e}")
+            db.session.rollback()
+            return []
+
 class MessageRepository:
     """Manages all data access logic for the Message model."""
 
