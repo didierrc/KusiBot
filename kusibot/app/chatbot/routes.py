@@ -50,7 +50,7 @@ def chat():
             'intent': bot_response["intent_detected"]
         })
     
-    except Exception as e:
+    except Exception:
 
         return jsonify({
             'response': CHAT_ERROR_MSG,
