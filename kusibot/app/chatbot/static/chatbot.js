@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const messageDiv = document.createElement('div')
         messageDiv.classList.add('p-2', 'px-3', 'rounded', 'mw-75')
         if (isUser)
-            messageDiv.classList.add('bg-primary', 'text-white')
+            messageDiv.classList.add('bg-primary')
         else
             messageDiv.classList.add('bg-white', 'border')
 
@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const timestampSmall = document.createElement('small')
         timestampSmall.classList.add('message-timestamp', 'd-block', 'mt-1')
         if (isUser) {
-            timestampSmall.classList.add('text-white-50')
             timestampSmall.classList.remove('text-end')
         } else {
             timestampSmall.classList.add('text-muted')

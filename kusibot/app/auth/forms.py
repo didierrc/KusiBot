@@ -23,10 +23,10 @@ class LoginForm(FlaskForm):
     """
 
     identifier = StringField('Username or Email', 
-                             validators=[DataRequired(), Length(min=4, max=64)], 
+                             validators=[DataRequired()], 
                              render_kw={'placeholder': 'kusibot or kusibot@email.com'})
     password = PasswordField('Password', 
-                             validators=[DataRequired(), Length(min=8, max=64)],
+                             validators=[DataRequired()],
                              render_kw={'placeholder': 'MySuperPassword'})
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')

@@ -108,3 +108,18 @@ header .navbar {
   background-color: #d1e7dd;
   border-color: #badbcc;
 }
+
+/* Accessibility <a> link */
+a {
+  color: #0250B1;
+}
+
+/* Accessibility in SOS page for headers */
+.h5-to-h3 {
+  font-size: 1.25rem;
+}
+
+/* Accessibility in About page for headers */
+.h4-to-h3 {
+  font-size: calc(1.275rem + .3vw);
+}
