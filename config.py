@@ -29,6 +29,12 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:' # In memory DB.
     WTF_CSRF_ENABLED = False
 
+class PerformanceConfig(TestingConfig):
+    """Performance Testing configuration for the Flask app."""
+    
+    # DB in disk to emulate production environment.
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'kusibot_performance.db')
+
 
 class ProductionConfig(Config):
     """Production configuration for the Flask app."""
@@ -40,5 +46,6 @@ config = {
     'dev': DevelopmentConfig,
     'testing': TestingConfig,
     'prod': ProductionConfig,
+    'performance': PerformanceConfig,
     'default': DevelopmentConfig
 }
