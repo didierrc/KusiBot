@@ -92,7 +92,7 @@ def assessment_test(performance_client, iteration):
     print(f"Iteration {iteration}")
 
     # 1. Scenario: Assessment messages
-    assessment_messages = ["I think I have depression", "I've been feeling anxious lately"]
+    assessment_messages = ["I think I have depression", "I've been feeling anxious lately", "I think I have depression", "I've been feeling anxious lately", "I think I have depression"]
     assessment_timings = []
 
     # 2. Sending messages
@@ -121,7 +121,7 @@ def assessment_test(performance_client, iteration):
         response = performance_client.get("/auth/logout", follow_redirects = True)
         assert response.status_code == 200
 
-        return assessment_timings
+    return assessment_timings
 
 def test_response_time_assessment(performance_db_session, performance_client):
     

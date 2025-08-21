@@ -133,8 +133,6 @@ Your Response:
 
         self.state = state
         self.state.context = self
-
-        print(f"AssesmentAgent: Transitioning from {type(self.state).__name__} --> {type(state).__name__}")
     
     def _get_question_json(self, assessment_id):
         """
