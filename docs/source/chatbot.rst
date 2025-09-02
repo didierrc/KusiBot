@@ -4,8 +4,6 @@ AI Core (chatbot)
 
 This package implements the core AI logic of KusiBot, designed as a Multi-Agent System.
 
-.. automodule:: kusibot.chatbot
-
 Agents
 ======
 

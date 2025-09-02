@@ -4,8 +4,6 @@ Services Layer (services)
 
 This package contains the business logic of the application, acting as an intermediary between the web routes and the backend data/AI layers.
 
-.. automodule:: kusibot.services
-
 Authentication Service
 ======================
 

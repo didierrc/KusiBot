@@ -4,8 +4,6 @@ Persistence Layer (database)
 
 This package handles all data storage and retrieval operations, including the ORM models and the repository pattern implementation.
 
-.. automodule:: kusibot.database
-
 Database
 ========
 

@@ -4,8 +4,6 @@ Web Application (app)
 
 This package contains all the Flask Blueprints that define the application's routes and views. It serves as the primary interface for user interaction.
 
-.. automodule:: kusibot.app
-
 Authentication Blueprint
 ========================
 
